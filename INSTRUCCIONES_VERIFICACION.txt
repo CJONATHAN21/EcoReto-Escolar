@@ -1,9 +1,0 @@
-ECORETO ESCOLAR - VERIFICACIÓN DE CORREO
-1. En Firebase > Firestore Database > Reglas, pega firestore.rules y pulsa Publicar.
-2. Sube todos los archivos actualizados a la raíz del repositorio GitHub (reemplaza los existentes). La rama publicada debe ser principal/main.
-3. Comprueba en Firebase Authentication > Configuración > Dominios autorizados que esté cjonathan21.github.io.
-4. Abre la web, actualiza con Ctrl+F5, regístrate con un correo de prueba que puedas consultar y pulsa el enlace que recibirás.
-5. Vuelve a la web y pulsa Ya verifiqué. Si no llegó, usa Reenviar correo (espera al menos 60 s).
-6. Comprueba Authentication y Firestore/usuarios.
-NOTAS: Sin costo de facturación en plan Spark, sujeto a cuotas. Los usuarios anteriores sin verificar deberán verificar su correo; pueden iniciar sesión y pulsar Reenviar.
-No se modificó la lógica de EcoReto/EcoArte para guardar en Firestore: queda para una etapa posterior.
