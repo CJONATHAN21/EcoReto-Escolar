@@ -203,6 +203,11 @@
 @media(max-width:420px){.eco-new .gallery-grid{grid-template-columns:1fr}.eco-new{padding:12px}.eco-product-row img{width:75px}}
 
 
+.auth-verify{padding:12px;background:#effcf5;border:1px solid #8fd6b2;border-radius:12px;margin:12px 0}
+.auth-verify p{font-size:.9rem;margin:8px 0}
+.auth-verify button{background:#087e6c;color:#fff;border:0;border-radius:9px;padding:10px;margin:3px;cursor:pointer}
+.auth-overlay .auth-panel{max-height:92vh;overflow-y:auto}
+.auth-overlay[hidden],.auth-verify[hidden],#authConfirmBox[hidden],#authNameBox[hidden]{display:none!important}
 /* Botones del modal de acceso: estilo uniforme, adaptable y accesible */
 .auth-panel .auth-actions {
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px;
@@ -642,8 +647,15 @@
     <form id="authForm">
       <div id="authNameBox"><label for="authName">Nombre</label><input id="authName" maxlength="90" autocomplete="name" required></div>
       <label for="authEmail">Correo electrónico</label><input id="authEmail" type="email" autocomplete="email" required>
-      <label for="authPassword">Contraseña</label><input id="authPassword" type="password" minlength="8" autocomplete="new-password" required>
-      <p id="authError" class="auth-error" role="alert"></p>
+      <label for="authPassword">Contraseña (mínimo 8 caracteres)</label><input id="authPassword" type="password" minlength="8" autocomplete="new-password" required>
+      <div id="authConfirmBox"><label for="authConfirm">Confirmar contraseña</label><input id="authConfirm" type="password" minlength="8" autocomplete="new-password" required></div>
+      <p id="authError" class="auth-error" role="alert" aria-live="polite"></p>
+      <div id="authVerifyBox" hidden class="auth-verify">
+        <strong>📩 Verifica tu correo</strong>
+        <p>Revisa tu bandeja de entrada y Spam. Abre el enlace de Firebase y luego pulsa «Ya verifiqué».</p>
+        <button type="button" id="authCheckVerified">✓ Ya verifiqué</button>
+        <button type="button" id="authResend">↻ Reenviar correo</button>
+      </div>
       <div class="auth-actions">
         <button type="submit" class="auth-action auth-primary" id="authSubmit">🌱 Crear cuenta</button>
         <button type="button" class="auth-action auth-outline" onclick="toggleAuthMode()" id="authModeButton">🔑 Ya tengo cuenta</button>
@@ -886,11 +898,14 @@
       const nameBox = document.getElementById('authNameBox');
       const register = nameBox.hidden;
       nameBox.hidden = !register;
+      document.getElementById('authConfirmBox').hidden = !register;
+      document.getElementById('authConfirm').required = register;
       document.getElementById('authName').required = register;
       document.getElementById('authSubmit').textContent = register ? '🌱 Crear cuenta' : '🔑 Iniciar sesión';
       document.getElementById('authModeButton').textContent = register ? '🔑 Ya tengo cuenta' : '🌱 Crear cuenta';
       document.getElementById('authPassword').autocomplete = register ? 'new-password' : 'current-password';
       document.getElementById('authError').textContent = '';
+      document.getElementById('authVerifyBox').hidden = true;
       window.ecoAuthMode = register ? 'register' : 'login';
     };
     window.ecoAuthMode = 'register';
