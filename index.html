@@ -436,6 +436,13 @@
           </div>
         </div>
 
+<div id="retoAccess" class="reto-access" style="background:#fff;border:1px solid #b9ebc8;border-radius:14px;padding:15px;margin:12px 0">
+ <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:end">
+ <label id="retoStudentLabel" style="flex:2;min-width:220px;font-weight:700">👩‍🎓 Alumno<br><select id="retoStudent" style="width:100%;padding:10px;border-radius:9px;border:1px solid #2ecc71"><option value="">Cargando estudiantes...</option></select></label>
+ <label style="flex:1;min-width:155px;font-weight:700">📅 Fecha<br><input type="date" id="retoDate" style="width:100%;padding:10px;border-radius:9px;border:1px solid #2ecc71"></label>
+ <label style="flex:1;min-width:150px;font-weight:700">📆 Mes<br><input type="month" id="retoMonth" style="width:100%;padding:10px;border-radius:9px;border:1px solid #2ecc71"></label>
+ </div><p id="retoStatus" role="status" style="margin-top:9px;color:#166534;font-weight:600">Inicia sesión para consultar EcoReto.</p>
+ </div>
         <p style="background: #ffffff; padding: 12px; border-radius: 12px; margin: 15px 0; font-weight: 700; color: #27ae60; border: 1px dashed #2ecc71;">
           🍃 Selecciona la cantidad de materiales que recolectaste esta semana.
         </p>
@@ -446,7 +453,7 @@
             <h4>Botellas (plástico)</h4>
             <div class="counter-controls">
               <button class="btn-circle" onclick="changeCount('c1', -1)">-</button>
-              <span id="c1" class="count-val">10</span>
+              <span id="c1" class="count-val">0</span>
               <button class="btn-circle" onclick="changeCount('c1', 1)">+</button>
             </div>
             <small>unidades</small>
@@ -457,7 +464,7 @@
             <h4>Papel</h4>
             <div class="counter-controls">
               <button class="btn-circle" onclick="changeCount('c2', -1)">-</button>
-              <span id="c2" class="count-val">20</span>
+              <span id="c2" class="count-val">0</span>
               <button class="btn-circle" onclick="changeCount('c2', 1)">+</button>
             </div>
             <small>unidades</small>
@@ -468,7 +475,7 @@
             <h4>Cartón</h4>
             <div class="counter-controls">
               <button class="btn-circle" onclick="changeCount('c3', -1)">-</button>
-              <span id="c3" class="count-val">8</span>
+              <span id="c3" class="count-val">0</span>
               <button class="btn-circle" onclick="changeCount('c3', 1)">+</button>
             </div>
             <small>unidades</small>
@@ -479,7 +486,7 @@
             <h4>Chapitas (metal)</h4>
             <div class="counter-controls">
               <button class="btn-circle" onclick="changeCount('c4', -1)">-</button>
-              <span id="c4" class="count-val">15</span>
+              <span id="c4" class="count-val">0</span>
               <button class="btn-circle" onclick="changeCount('c4', 1)">+</button>
             </div>
             <small>unidades</small>
@@ -490,7 +497,7 @@
             <h4>Otros (aprovechables)</h4>
             <div class="counter-controls">
               <button class="btn-circle" onclick="changeCount('c5', -1)">-</button>
-              <span id="c5" class="count-val">5</span>
+              <span id="c5" class="count-val">0</span>
               <button class="btn-circle" onclick="changeCount('c5', 1)">+</button>
             </div>
             <small>unidades</small>
@@ -502,8 +509,8 @@
           <textarea placeholder="Ej: Traje botellas de mi casa..." style="width: 100%; padding: 10px; border-radius: 12px; border: 2px solid #2ecc71; margin-top: 5px; font-family: inherit;"></textarea>
         </div>
 
-        <button class="btn btn-orange" style="width: 100%; justify-content: center; margin-top: 20px; font-size: 1.1rem;" onclick="saveWeekData()">
-          💾 Guardar semana
+        <button class="btn btn-orange" style="width: 100%; justify-content: center; margin-top: 20px; font-size: 1.1rem;" id="retoSave" onclick="saveWeekData()">
+          💾 Guardar recolección
         </button>
       </div>
     </section>
@@ -580,27 +587,28 @@
           </div>
         </div>
 
+        <p id="logrosSource" style="font-size:.9rem;color:#636e72;margin-bottom:8px">Los totales recolectados se consultan desde Firebase. EcoArte se integrará en una siguiente etapa.</p>
         <div class="achievements-grid">
           <div class="achievement-card">
             <div class="logro-icon">♻️</div><h4>Materiales recolectados</h4>
-            <div class="logro-number" id="logroRecolectados">200</div>
+            <div class="logro-number" id="logroRecolectados">0</div>
             <small>en total 🌱</small>
           </div>
           <div class="achievement-card">
             <div class="logro-icon">🔄</div><h4>Materiales reutilizados</h4>
-            <div class="logro-number" id="logroReutilizados">130</div>
+            <div class="logro-number" id="logroReutilizados">0</div>
             <small>en total 🌱</small>
           </div>
           <div class="achievement-card">
             <div class="logro-icon">📦</div><h4>Materiales por reutilizar</h4>
-            <div class="logro-number" id="logroReducidos">70</div>
+            <div class="logro-number" id="logroReducidos">0</div>
             <small>Por aprovechar 🌱</small>
           </div>
           <div class="achievement-card achievement-goal">
             <div class="logro-icon">🎯</div><h4>Meta del mes</h4>
             <div class="logro-goal-number">300 <span>materiales</span></div>
-            <div class="progress-bar-bg"><div class="progress-bar-fill" id="logroMetaBar" style="width: 67%;"></div></div>
-            <div class="logro-progress-info"><span>Acumulado: <strong id="logroAcumulado">200</strong></span><strong id="logroMetaPct">67%</strong></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="logroMetaBar" style="width: 0%;"></div></div>
+            <div class="logro-progress-info"><span>Acumulado: <strong id="logroAcumulado">0</strong></span><strong id="logroMetaPct">0%</strong></div>
           </div>
         </div>
 
@@ -775,20 +783,16 @@
     }
 
     function changeCount(id, change) {
+      if (!window.ecoRetoCanEdit?.()) return;
       const el = document.getElementById(id);
       let val = parseInt(el.innerText) + change;
       if (val < 0) val = 0;
       el.innerText = val;
     }
 
-    function setWeek(w, btn) {
-      document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-    }
+    function setWeek(w, btn) { window.ecoRetoSelectWeek?.(w); }
 
-    function saveWeekData() {
-      openModal('💾 ¡Semana Guardada!', 'Tus datos de recolección de esta semana se han registrado correctamente.');
-    }
+    function saveWeekData() { window.ecoRetoSave?.(); }
 
     /* SUBIDA DE FOTOS */
     function triggerFileUpload() {
@@ -847,7 +851,7 @@
 
     function changeLogrosMonth() {
       const selectedMonth = document.getElementById('logrosMonthSelect').value;
-      openModal('📅 Mes Cambiado', 'Ahora estás consultando el panel correspondiente a: ' + selectedMonth);
+      window.ecoRetoUpdateLogros?.();
     }
 
     function downloadPdf(filename, content) {
@@ -919,5 +923,6 @@
     });
   </script>
   <script type="module" src="./firebase-auth.js"></script>
+  <script type="module" src="./firebase-reto.js"></script>
 </body>
 </html>

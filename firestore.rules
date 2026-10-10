@@ -1,21 +1,62 @@
 rules_version = '2';
 service cloud.firestore {
-  match /databases/{database}/documents {
-    function logged() { return request.auth != null; }
-    function verified() { return logged() && request.auth.token.email_verified == true; }\n    function teacher() {
-      return verified() && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
-        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'docente';
-    }
-    match /usuarios/{uid} {
-      allow create: if logged() && request.auth.uid == uid
-        && request.resource.data.keys().hasOnly(['nombre','correo','rol','creadoEn'])
-        && request.resource.data.rol == 'alumno'
-        && request.resource.data.correo == request.auth.token.email;
-      allow read: if verified() && (request.auth.uid == uid || teacher());
-      allow update: if teacher() || (verified() && request.auth.uid == uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre']));
-      allow delete: if false;
-    }
-    match /{document=**} { allow read, write: if false; }
+ match /databases/{database}/documents {
+  function logged() { return request.auth != null; }
+  function verified() { return logged() && request.auth.token.email_verified == true; }
+  function localNow() { return request.time - duration.value(5, 'h'); }
+  function teacher() {
+   return verified() && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+    && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'docente';
   }
+  match /usuarios/{uid} {
+   allow create: if logged() && request.auth.uid == uid
+    && request.resource.data.keys().hasOnly(['nombre','correo','rol','creadoEn'])
+    && request.resource.data.rol == 'alumno'
+    && request.resource.data.correo == request.auth.token.email;
+   allow read: if verified() && (request.auth.uid == uid || teacher());
+   allow list: if teacher();
+   allow update: if teacher() || (verified() && request.auth.uid == uid
+    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre']));
+   allow delete: if false;
+  }
+  match /recolecciones/{id} {
+   function valid() {
+    return request.resource.data.keys().hasOnly(['alumnoId','fecha','mes','semana','plastico','papel','carton','metal','otros','observaciones','registradoPor','actualizadoEn','anio','mesNumero','dia'])
+     && request.resource.data.keys().hasAll(['alumnoId','fecha','mes','semana','plastico','papel','carton','metal','otros','observaciones','registradoPor','actualizadoEn','anio','mesNumero','dia'])
+     && request.resource.data.alumnoId is string
+     && request.resource.data.fecha is string && request.resource.data.fecha.size() == 10
+     && request.resource.data.mes is string && request.resource.data.mes.size() == 7
+     && request.resource.data.fecha.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+     && request.resource.data.mes == request.resource.data.fecha.substring(0,7)
+     && request.resource.data.anio is int && request.resource.data.anio == localNow().year()
+     && request.resource.data.mesNumero is int && request.resource.data.mesNumero == localNow().month()
+     && request.resource.data.dia is int && request.resource.data.dia >= 1 && request.resource.data.dia <= localNow().day()
+     && request.resource.data.semana is int && request.resource.data.semana >= 1 && request.resource.data.semana <= 4
+     && request.resource.data.semana == (localNow().day() <= 7 ? 1 : localNow().day() <= 14 ? 2 : localNow().day() <= 21 ? 3 : 4)
+     && request.resource.data.dia >= (request.resource.data.semana - 1) * 7 + 1
+     && (request.resource.data.semana == 4 || request.resource.data.dia <= request.resource.data.semana * 7)
+     && request.resource.data.plastico is int && request.resource.data.plastico >= 0 && request.resource.data.plastico <= 10000
+     && request.resource.data.papel is int && request.resource.data.papel >= 0 && request.resource.data.papel <= 10000
+     && request.resource.data.carton is int && request.resource.data.carton >= 0 && request.resource.data.carton <= 10000
+     && request.resource.data.metal is int && request.resource.data.metal >= 0 && request.resource.data.metal <= 10000
+     && request.resource.data.otros is int && request.resource.data.otros >= 0 && request.resource.data.otros <= 10000
+     && request.resource.data.observaciones is string && request.resource.data.observaciones.size() <= 500
+     && request.resource.data.registradoPor == request.auth.uid
+     && request.resource.data.actualizadoEn == request.time
+     && id == request.resource.data.alumnoId + '_' + request.resource.data.fecha;
+   }
+   allow get, list: if verified() && (teacher() || resource.data.alumnoId == request.auth.uid);
+   allow create: if teacher() && valid()
+    && exists(/databases/$(database)/documents/usuarios/$(request.resource.data.alumnoId))
+    && get(/databases/$(database)/documents/usuarios/$(request.resource.data.alumnoId)).data.rol == 'alumno';
+   allow update: if teacher() && valid()
+    && request.resource.data.alumnoId == resource.data.alumnoId
+    && request.resource.data.fecha == resource.data.fecha
+    && request.resource.data.anio == resource.data.anio
+    && request.resource.data.mesNumero == resource.data.mesNumero
+    && request.resource.data.dia == resource.data.dia;
+   allow delete: if false;
+  }
+  match /{document=**} { allow read, write: if false; }
+ }
 }
