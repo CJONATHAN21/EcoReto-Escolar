@@ -1,0 +1,10 @@
+EcoReto Escolar - Firebase configurado (etapa 1)
+
+1. Firebase web config ya está incluido en firebase-config.js.
+2. En Firebase Console > Firestore Database > Reglas, pega el contenido de firestore.rules y pulsa PUBLICAR. Si no lo haces, la creación del perfil fallará.
+3. Abre el proyecto desde un servidor HTTP o HTTPS (GitHub Pages o, en la carpeta del proyecto, python -m http.server 8000 y luego http://localhost:8000). No uses file:// para probar autenticación.
+4. Firebase Console > Authentication > Configuración > Dominios autorizados: verifica que figure el dominio donde publicas la web (por ejemplo rvillacortam8-pixel.github.io). Añádelo si falta.
+5. Registra un estudiante de prueba; comprueba su usuario en Authentication y su documento en Firestore > usuarios.
+6. Para designar un docente, registra primero su cuenta y cambia manualmente su campo rol de alumno a docente en Firestore Console. No agregues un selector de rol público.
+
+ATENCIÓN: esta entrega solo integra el registro y acceso. EcoReto, EcoArte y Mis Logros todavía NO están conectados a Firestore y no deben usarse con datos reales de estudiantes. Los datos de EcoArte de versiones anteriores siguen siendo locales.

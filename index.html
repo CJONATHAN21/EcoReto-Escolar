@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoReto Escolar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-green: #2ecc71;
+      --dark-green: #27ae60;
+      --header-green: #10ac84;
+      --accent-yellow: #f1c40f;
+      --accent-orange: #f39c12;
+      --accent-blue: #3498db;
+      --accent-pink: #e84393;
+      --accent-purple: #9b59b6;
+      --bg-soft: #f0fdf4;
+      --text-main: #2c3e50;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
+    body { background-color: var(--bg-soft); color: var(--text-main); padding-bottom: 40px; }
+    h1, h2, h3, h4, .btn, .logo-title { font-family: 'Fredoka', cursive, sans-serif; }
+
+    /* HEADER Y NAVEGACIÓN */
+    header {
+      background: #ffffff; padding: 12px 5%; display: flex; justify-content: space-between;
+      align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); position: sticky;
+      top: 0; z-index: 100; flex-wrap: wrap; gap: 10px;
+    }
+    .brand-container { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { font-size: 2.2rem; }
+    
+    /* LOGO SIN ENCIERRO EN LA PALABRA ESCOLAR */
+    .logo-title { font-size: 2rem; color: #10ac84; font-weight: 700; display: flex; align-items: center; gap: 6px; font-family: 'Fredoka', cursive; }
+    .logo-text-escolar { color: #10ac84; font-weight: 600; font-size: 1.8rem; margin-left: 2px; font-family: 'Fredoka', cursive; }
+    .logo-subtitle { font-size: 0.75rem; color: #7f8c8d; font-weight: 600; }
+
+    nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-btn {
+      background: #f0f4f8; border: none; padding: 8px 16px; border-radius: 20px;
+      font-weight: 700; color: #555; cursor: pointer; transition: all 0.2s ease;
+      display: flex; align-items: center; gap: 6px; font-size: 0.95rem;
+    }
+    .nav-btn:hover, .nav-btn.active { background: #10ac84; color: white; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(16, 172, 132, 0.3); }
+
+    .tag-phrase { background: #fff9db; color: #d63031; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; border: 2px dashed #ffeaa7; }
+
+    /* CONTENEDOR PRINCIPAL */
+    .container { max-width: 1100px; margin: 20px auto; padding: 0 15px; }
+    .section-tab { display: none; animation: fadeIn 0.3s ease; }
+    .section-tab.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* BANNER INTEGRADO CON IMAGEN DE FONDO */
+    .hero-banner-integrated {
+      background: linear-gradient(90deg, rgba(16, 172, 132, 0.95) 0%, rgba(16, 172, 132, 0.8) 55%, rgba(16, 172, 132, 0.25) 100%), 
+                  url('banner.png');
+      background-size: cover;
+      background-position: right center;
+      background-repeat: no-repeat;
+      border-radius: 28px;
+      padding: 40px 35px;
+      color: white;
+      min-height: 320px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: 0 10px 25px rgba(16, 172, 132, 0.25);
+    }
+    .hero-content-wrapper { max-width: 60%; }
+    .hero-badge-pill { background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.4); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; display: inline-block; margin-bottom: 12px; }
+    .hero-main-title { font-size: 2.3rem; margin-bottom: 12px; line-height: 1.2; text-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+    .hero-body-text { font-size: 0.95rem; line-height: 1.5; opacity: 0.95; margin-bottom: 22px; text-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+    .campaign-strip { background: #e8f8f0; border: 2px dashed #a3e635; border-radius: 16px; padding: 12px 20px; margin: 20px 0; display: flex; align-items: center; justify-content: center; gap: 15px; font-weight: 700; color: #1e824c; font-size: 0.95rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
+    .stat-card { background: white; border-radius: 18px; padding: 18px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); border-left: 6px solid #2ecc71; }
+    .stat-number { font-size: 1.5rem; font-weight: 700; color: var(--text-main); }
+    .stat-label { font-size: 0.8rem; color: #7f8c8d; }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .feature-card { background: white; border-radius: 20px; padding: 22px; box-shadow: 0 6px 18px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; border-top: 5px solid #3498db; }
+    .feature-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
+    .feature-card p { font-size: 0.9rem; color: #666; margin-bottom: 15px; }
+
+    /* SECCIONES CON FONDOS COLORIDOS */
+    .guide-box { background: #fffde7; border-radius: 24px; padding: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); border: 3px solid #fbc531; }
+    .search-section { background: #ffffff; border: 3px solid #f9ca24; border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 25px; }
+    .search-bar { width: 80%; max-width: 500px; padding: 12px 20px; border-radius: 25px; border: 2px solid #f39c12; font-size: 1rem; outline: none; margin-top: 10px; }
+    .tags-container { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .tag-item { background: #fef5e7; padding: 6px 12px; border-radius: 15px; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.08); font-weight: 700; }
+
+
+    .prior-knowledge {background:#f0fff6;border:2px solid #83d6a4;border-radius:18px;padding:18px;margin-bottom:20px;text-align:center;color:#235b48}
+    .prior-knowledge h3 {margin-bottom:8px}
+    .prior-grid {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+    .prior-grid>div {background:white;border:1px solid #c5e8d0;border-radius:12px;padding:12px 8px}
+    .prior-grid strong,.prior-grid small {display:block;margin-top:5px}
+    .prior-grid small {font-size:.78rem;line-height:1.35}
+    .prior-note {font-size:.85rem}
+    .game-instructions {margin:0 0 12px}
+    .game-feedback {min-height:36px;margin:8px auto 14px;padding:9px 12px;border-radius:12px;background:#fff;color:#176b8b;font-weight:700}
+    .draggable-item.selected-waste {border-color:#009e88;box-shadow:0 0 0 3px #a1f4e4;background:#e6fff9}
+    .draggable-item:focus-visible,.drop-zone:focus-visible {outline:3px solid #c14ff0;outline-offset:2px}
+    @media(max-width:650px){.prior-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.draggable-item{font-size:2rem;padding:6px 9px}.tachos-drop-zones{gap:0}}
+    .game-banner-btn { background: linear-gradient(90deg, #ff7675, #fdcb6e, #55efc4, #74b9ff); color: #2d3436; text-align: center; padding: 15px; border-radius: 25px; font-size: 1.2rem; font-weight: 700; cursor: pointer; box-shadow: 0 6px 15px rgba(0,0,0,0.1); margin-bottom: 25px; }
+    .game-area { background: #e1f5fe; border: 3px solid #00a8ff; border-radius: 20px; padding: 20px; position: relative; text-align: center; }
+    
+    /* OBJETOS ARRASTRABLES Y TACHOS INTERACTIVOS */
+    .items-container { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; min-height: 90px; padding: 12px; background: white; border-radius: 16px; margin-bottom: 20px; border: 2px dashed #00a8ff; }
+    .draggable-item { font-size: 2.8rem; cursor: grab; padding: 8px 14px; background: #f7f9fa; border-radius: 16px; border: 2px solid #dcdde1; user-select: none; transition: transform 0.2s; }
+    .draggable-item:active { cursor: grabbing; transform: scale(1.15); }
+
+    .tachos-game-wrapper { position: relative; max-width: 800px; margin: 0 auto; }
+    .tachos-img-bg { width: 100%; height: auto; border-radius: 16px; display: block; }
+    .tachos-drop-zones { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .drop-zone { border: 2px dashed transparent; border-radius: 16px; transition: background 0.2s; cursor: pointer; }
+    .drop-zone.drag-over { background: rgba(46, 204, 113, 0.3); border-color: #2ecc71; }
+
+    .colored-section-reto { background: #e8f8f5; border-radius: 24px; padding: 25px; border: 3px solid #2ecc71; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+    .colored-section-arte { background: #f3e5f5; border-radius: 24px; padding: 25px; border: 3px solid #ab47bc; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+    .colored-section-galeria { background: #e3f2fd; border-radius: 24px; padding: 25px; border: 3px solid #42a5f5; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+    .colored-section-logros { background: #fff8e1; border-radius: 24px; padding: 25px; border: 3px solid #ffa726; box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+
+    .week-tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: flex-end; }
+    .week-btn { padding: 8px 16px; border-radius: 12px; border: 2px solid #2ecc71; background: white; color: #2ecc71; font-weight: 700; cursor: pointer; }
+    .week-btn.active { background: #2ecc71; color: white; }
+    .counters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+    .counter-card { background: white; border: 2px solid #a3e635; border-radius: 18px; padding: 15px; text-align: center; }
+    .counter-controls { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 10px; }
+    .btn-circle { width: 36px; height: 36px; border-radius: 50%; border: none; background: #2ecc71; color: white; font-size: 1.2rem; font-weight: 700; cursor: pointer; }
+    .count-val { font-size: 1.3rem; font-weight: 700; width: 50px; display: inline-block; }
+
+    .month-select { background: white; border: 2px solid #f39c12; border-radius: 15px; padding: 8px 16px; font-size: 0.95rem; font-weight: 700; color: #e67e22; outline: none; cursor: pointer; }
+
+    /* GALERÍA Y ECOARTE */
+    .art-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+    .btn-art-action { padding: 18px; border-radius: 20px; border: none; color: white; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); }
+    .btn-upload { background: #ff9f43; }
+    .btn-download { background: #a55eea; }
+    #fileInput { display: none; }
+
+    .gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; }
+    .art-card { background: white; border-radius: 18px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.06); border: 2px solid #e1b12c; display: flex; flex-direction: column; justify-content: space-between; }
+    .art-img { width: 100%; height: 180px; object-fit: cover; background: #f8f9fa; display: flex; align-items: center; justify-content: center; }
+    .art-info { padding: 12px; flex-grow: 1; }
+    .btn-dl-item { width: calc(100% - 24px); margin: 0 12px 12px 12px; padding: 10px; border-radius: 12px; border: none; background: #9b59b6; color: white; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
+
+    .achievements-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 20px; }
+    .achievement-card { background: white; border-radius: 18px; padding: 20px; text-align: center; border: 2px solid #f1c40f; display: flex; flex-direction: column; justify-content: space-between; }
+    .progress-bar-bg { background: #e0e0e0; border-radius: 10px; height: 16px; width: 100%; margin-top: 8px; overflow: hidden; }
+    .progress-bar-fill { background: linear-gradient(90deg, #2ecc71, #a3e635); height: 100%; width: 96%; transition: width 0.3s ease; }
+
+    .btn { border: none; padding: 12px 22px; border-radius: 25px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+    .btn-orange { background: #f39c12; color: white; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4); }
+    .btn-white { background: white; color: var(--dark-green); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 1000; }
+    .modal-content { background: white; padding: 25px; border-radius: 20px; max-width: 450px; width: 90%; text-align: center; }
+  
+    /* Mis Logros: distribución solicitada (3 tarjetas + meta debajo a la izquierda) */
+    #tab-logros .achievements-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:18px;align-items:stretch;}
+    #tab-logros .achievement-card {min-height:182px;padding:18px 14px;border:2px solid #f0dd44;border-radius:17px;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;box-sizing:border-box;}
+    #tab-logros .achievement-card h4 {font-size:1.08rem;color:#315267;margin:0;text-align:center;}
+    #tab-logros .logro-icon {font-size:2.8rem;line-height:1.1;}
+    #tab-logros .logro-number {font-size:2.5rem;font-weight:800;color:#315267;line-height:1.2;margin:6px 0 0;}
+    #tab-logros .achievement-card small {font-size:.94rem;color:#77939b;}
+    #tab-logros .achievement-goal {min-height:175px;padding:12px 17px;}
+    #tab-logros .achievement-goal .logro-icon {font-size:2.5rem;}
+    #tab-logros .logro-goal-number {font-size:2rem;font-weight:800;color:#315267;}
+    #tab-logros .logro-goal-number span {font-size:.85rem;font-weight:600;}
+    #tab-logros .achievement-goal .progress-bar-bg {height:17px;margin-top:3px;background:#d7e8e9;}
+    #tab-logros .achievement-goal .progress-bar-fill {background:linear-gradient(90deg,#19c99a,#10c882);}
+    #tab-logros .logro-progress-info {display:flex;justify-content:space-between;width:100%;font-size:.86rem;color:#72909b;}
+    #tab-logros .logro-progress-info strong {color:#315267;}
+    #tab-logros #logroMetaPct {color:#0bbd82;}
+    @media(max-width:700px){#tab-logros .achievements-grid{grid-template-columns:repeat(2,minmax(0,1fr));}#tab-logros .achievement-card{min-height:165px;}#tab-logros .achievement-card h4{font-size:.9rem;}#tab-logros .logro-number{font-size:2rem;}}
+    @media(max-width:430px){#tab-logros .achievements-grid{grid-template-columns:1fr;}#tab-logros .achievement-card{min-height:150px;}}
+
+  
+/* EcoArte - prototipo funcional */
+.eco-new{background:#f4e6f7;border:2px solid #b45bc5;border-radius:22px;padding:24px}
+.eco-new .gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.eco-project-card{display:flex;flex-direction:column;overflow:hidden;border:2px solid #dfca87;border-radius:14px;background:#fff}
+.eco-project-card .art-img{width:100%;height:165px;object-fit:cover}
+.eco-project-card .art-info{flex:1;padding:10px}
+.eco-project-card .art-info h4{font-size:1rem}
+.eco-project-card .art-info p{font-size:.82rem;color:#5b6170;margin-top:4px}
+.eco-card-actions{padding:0 10px 10px;display:grid;gap:6px}
+.eco-view,.eco-pdf,.eco-blue,.eco-green,.eco-cancel{border:0;border-radius:9px;padding:10px 12px;font-weight:700;cursor:pointer;color:#fff;font-family:inherit}
+.eco-view{background:linear-gradient(110deg,#7944da,#9a50ec)}.eco-pdf{background:#f0e5fa;color:#6337a8}.eco-blue{background:linear-gradient(110deg,#4388fa,#4777eb)}.eco-green{background:linear-gradient(110deg,#04bb85,#00a87a)}.eco-cancel{background:#f3e8f8;color:#7445ae}
+.eco-overlay[hidden]{display:none!important}.eco-overlay{position:fixed;inset:0;background:#24183c99;z-index:10000;display:flex;justify-content:center;align-items:center;padding:18px;overflow:auto}
+.eco-dialog,.eco-register-dialog{width:min(100%,850px);background:#fff;border:2px solid #8250db;border-radius:17px;box-shadow:0 16px 55px #25134555;overflow:hidden;max-height:94vh;overflow-y:auto}
+.eco-dialog-head{display:flex;align-items:center;gap:12px;background:#f0d8ff;padding:12px 16px;color:#54259a}.eco-dialog-head h2{font-size:1.25rem;flex:1}.eco-back,.eco-close,.eco-register-head button{border:0;border-radius:100px;background:#dbb6fa;color:#62309b;font-size:22px;width:34px;height:34px;cursor:pointer}
+.eco-detail-body{padding:16px;display:grid;grid-template-columns:1.3fr 1fr;gap:18px}.eco-image-wrap{position:relative}.eco-image-wrap img{width:100%;height:225px;object-fit:cover;border-radius:12px}.eco-image-wrap span{position:absolute;top:8px;left:8px;background:#39bb6d;color:white;border-radius:20px;padding:5px 9px;font-size:12px;font-weight:700}
+.eco-detail-left h3,.eco-materials h3{color:#313f60;margin:12px 0}.eco-detail-left ol{list-style:none;counter-reset:eco;display:grid;gap:11px;padding:0}.eco-detail-left li{counter-increment:eco;display:flex;gap:10px;align-items:flex-start;font-size:.9rem}.eco-detail-left li:before{content:counter(eco);background:#9148d8;color:#fff;border-radius:50%;width:22px;height:22px;display:grid;place-items:center;flex:none;font-size:12px;font-weight:bold}
+.eco-materials{background:#faf6ff;border:1px solid #e3d1fa;border-radius:12px;padding:14px}.eco-materials ul{list-style:none;padding:0;display:grid;gap:12px}.eco-materials li{display:flex;gap:10px;align-items:center;font-size:.9rem}.eco-mascot{margin-top:20px;font-size:38px;display:flex;align-items:center;gap:10px}.eco-mascot small{font-size:12px;background:white;padding:8px;border-radius:12px}
+.eco-dialog-actions{display:flex;gap:9px;padding:12px 16px;border-top:1px solid #e8ddf2}.eco-dialog-actions button{flex:1}
+.eco-register-dialog{width:min(100%,700px)}.eco-register-head{background:linear-gradient(100deg,#7453d2,#6444b8);color:white;padding:12px 16px;font-weight:bold;display:flex;justify-content:space-between;align-items:center}.eco-register-head button{background:transparent;color:white}.eco-register-dialog form{padding:18px}.eco-product-row{display:flex;gap:15px;align-items:center}.eco-product-row img{width:90px;height:75px;object-fit:cover;border-radius:10px}.eco-product-row>div:nth-child(2){flex:1}.eco-quantity label{font-size:13px;font-weight:bold;display:block;margin-bottom:8px}.eco-quantity>div{display:flex;align-items:center;gap:8px}.eco-quantity button{border:0;background:#8152db;color:white;border-radius:50%;width:28px;height:28px;font-size:19px;cursor:pointer}.eco-quantity input{width:65px;text-align:center;padding:7px;border:1px solid #d5cbe8;border-radius:7px}.eco-register-dialog h4{margin:18px 0 10px;color:#33415f}.eco-table-wrap{overflow-x:auto}.eco-table{border-collapse:collapse;width:100%;font-size:.9rem}.eco-table th{text-align:left;background:#f1ebfa;color:#41516e}.eco-table td,.eco-table th{padding:9px;border-bottom:1px solid #e9e2f3}.eco-table input{width:110px;padding:7px;border:1px solid #d7cfe5;border-radius:6px}.eco-help{color:#65718b;font-size:12px;margin-top:10px}.eco-register-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+@media(max-width:700px){.eco-new .gallery-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.eco-detail-body{grid-template-columns:1fr}.eco-dialog-actions{flex-wrap:wrap}.eco-dialog-actions button{min-width:150px}.eco-product-row{flex-wrap:wrap}.eco-quantity{width:100%}}
+@media(max-width:420px){.eco-new .gallery-grid{grid-template-columns:1fr}.eco-new{padding:12px}.eco-product-row img{width:75px}}
+
+
+/* Botones del modal de acceso: estilo uniforme, adaptable y accesible */
+.auth-panel .auth-actions {
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:18px;
+}
+.auth-panel .auth-actions .auth-action {
+  appearance:none;display:flex;align-items:center;justify-content:center;
+  width:100%;min-height:44px;margin:0;padding:11px 12px;
+  border:2px solid transparent;border-radius:12px;
+  font-family:inherit;font-size:.88rem;font-weight:750;line-height:1.25;
+  cursor:pointer;transition:background-color .15s,box-shadow .15s,transform .15s;
+}
+.auth-panel .auth-actions .auth-primary {background:#00aa90;color:white;box-shadow:0 3px 10px #00aa902e}
+.auth-panel .auth-actions .auth-outline {background:#f4efff;color:#6438bd;border-color:#d9c7ff}
+.auth-panel .auth-actions .auth-link {background:#eff9ff;color:#1875a4;border-color:#c8e8f6}
+.auth-panel .auth-actions .auth-close {background:#f5f6f8;color:#495569;border-color:#e3e6ec}
+.auth-panel .auth-actions .auth-action:hover {filter:brightness(.96);transform:translateY(-1px)}
+.auth-panel .auth-actions .auth-action:focus-visible {outline:3px solid #ffbc42;outline-offset:2px}
+@media(max-width:430px){.auth-panel .auth-actions{grid-template-columns:1fr}}
+</style>
+
+<style>
+.auth-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}
+.auth-bar button,.auth-submit{background:#00a991;color:white;border:0;border-radius:12px;padding:10px 15px;font-weight:700;cursor:pointer}
+.auth-bar .auth-secondary{background:#7752d7}
+.auth-overlay{position:fixed;inset:0;background:#102b3488;z-index:9999;display:flex;align-items:center;justify-content:center;padding:15px}
+.auth-overlay[hidden]{display:none}
+.auth-panel{background:white;max-width:430px;width:100%;border-radius:20px;padding:24px;box-shadow:0 16px 50px #0004}
+.auth-panel input{width:100%;padding:11px;border:1px solid #bbb;border-radius:9px;margin:5px 0 12px}
+.auth-panel label{display:block;font-weight:650}
+.auth-panel button{margin:4px}
+.auth-error{color:#a31b3b;min-height:20px}
+</style>
+</head>
+<body>
+
+  <!-- ENCABEZADO -->
+  <header>
+    <div class="brand-container">
+      <div class="logo-icon">🌎</div>
+      <div>
+        <div class="logo-title">EcoReto <span class="logo-text-escolar">Escolar</span></div>
+        <div class="logo-subtitle">Clasificamos • Reutilizamos • Reducimos</div>
+      </div>
+    </div>
+
+    <nav>
+      <button class="nav-btn active" onclick="switchTab('inicio')">🏠 Inicio</button>
+      <button class="nav-btn" onclick="switchTab('guia')">♻️ Guía</button>
+      <button class="nav-btn" onclick="switchTab('ecoreto')">🎯 EcoReto</button>
+      <button class="nav-btn" onclick="switchTab('ecoarte')">🎨 EcoArte</button>
+      <button class="nav-btn" onclick="switchTab('galeria')">📸 Galería</button>
+      <button class="nav-btn" onclick="switchTab('logros')">🏆 Mis Logros</button>
+    </nav>
+
+    <div class="auth-bar">
+      <span id="authState">👤 Invitado</span>
+      <button type="button" id="authOpenBtn" onclick="openAuth()">Ingresar / Registrarse</button>
+      <button type="button" class="auth-secondary" id="authLogoutBtn" onclick="ecoLogout()" hidden>Cerrar sesión</button>
+    </div>
+    <div class="tag-phrase">⭐ ¡Tú puedes hacer la diferencia!</div>
+  </header>
+
+  <div class="container">
+
+    <!-- 1. INICIO -->
+    <section id="tab-inicio" class="section-tab active">
+      <div class="hero-banner-integrated">
+        <div class="hero-content-wrapper">
+          <span class="hero-badge-pill">🏫 Proyecto Ambiental Educativo</span>
+          <h1 class="hero-main-title">¡Clasificamos • Reutilizamos • Reducimos!</h1>
+          <p class="hero-body-text">
+            <strong>¿PARA QUÉ ESTÁ HECHO ECOPANEL?</strong><br>
+            EcoPanel es una plataforma educativa para aprender a clasificar residuos, participar en desafíos colectivos y crear arte reciclado. ¡Sin competencia, solo colaboración!
+          </p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button class="btn btn-orange" onclick="switchTab('ecoreto')">🚀 ¡Ver mi EcoPanel!</button>
+            <button class="btn btn-white" onclick="switchTab('guia')">♻️ Explorar Guía</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="campaign-strip">
+        <span>🕒 TEMPORADA DE RECOLECCIÓN ACTIVA: SEMANA 3 DE 4 (Campaña de Octubre)</span>
+        <span>|</span>
+        <span>📅 Fecha límite: 31 de Octubre</span>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card" style="border-color: #e84393;">
+          <div style="font-size: 2rem;">🎨</div>
+          <div>
+            <div class="stat-number">42 Horas</div>
+            <div class="stat-label">Horas de Taller EcoArte</div>
+          </div>
+        </div>
+        <div class="stat-card" style="border-color: #f39c12;">
+          <div style="font-size: 2rem;">🍾</div>
+          <div>
+            <div class="stat-number">1,200 Unidades</div>
+            <div class="stat-label">Residuos Recolectados</div>
+          </div>
+        </div>
+        <div class="stat-card" style="border-color: #9b59b6;">
+          <div style="font-size: 2rem;">✂️</div>
+          <div>
+            <div class="stat-number">15 Proyectos</div>
+            <div class="stat-label">Proyectos EcoArte</div>
+          </div>
+        </div>
+        <div class="stat-card" style="border-color: #3498db;">
+          <div style="font-size: 2rem;">👥</div>
+          <div>
+            <div class="stat-number">150+</div>
+            <div class="stat-label">Estudiantes Activos</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards-grid">
+        <div class="feature-card" style="border-top-color: #3498db;">
+          <div>
+            <h3>📘 Guía Ecológica</h3>
+            <p>Aprende a separar correctamente los residuos (orgánicos, plásticos, papel, metal) y practica con el juego interactivo.</p>
+          </div>
+          <button class="btn btn-orange" style="background: #3498db;" onclick="switchTab('guia')">Ver más →</button>
+        </div>
+        <div class="feature-card" style="border-top-color: #f1c40f;">
+          <div>
+            <h3>🎯 EcoRetos</h3>
+            <p>¡Acepta el desafío colectivo! Junta latas, botellas y papel para completar metas y reducir nuestra huella.</p>
+          </div>
+          <button class="btn btn-orange" style="background: #f1c40f; color: #333;" onclick="switchTab('ecoreto')">Ver más →</button>
+        </div>
+        <div class="feature-card" style="border-top-color: #e84393;">
+          <div>
+            <h3>🎨 EcoArte</h3>
+            <p>Crea, reutiliza e imagina. Descubre manualidades sencillas con macetas, robots de cartón y adornos con tapas.</p>
+          </div>
+          <button class="btn btn-orange" style="background: #e84393;" onclick="switchTab('ecoarte')">Ver más →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. GUÍA ECOLÓGICA -->
+    <section id="tab-guia" class="section-tab">
+      <div class="guide-box">
+        <h2 style="text-align: center; margin-bottom: 20px; font-size: 2rem; color: #d35400;">🌱 Guía Ecológica</h2>
+        <div class="prior-knowledge">
+          <h3>🧠 Conocimientos previos: ¡Aprendamos a clasificar!</h3>
+          <p>Antes de jugar, observa los colores de los tachos y recuerda dónde va cada residuo.</p>
+          <div class="prior-grid">
+            <div>🟤 <strong>Marrón: Orgánicos</strong><small>Cáscaras de frutas y restos vegetales.</small></div>
+            <div>🟡 <strong>Amarillo: Plástico y latas</strong><small>Botellas plásticas limpias y latas.</small></div>
+            <div>🔵 <strong>Azul: Papel y cartón</strong><small>Cajas y papel limpios y secos.</small></div>
+            <div>🟢 <strong>Verde: Vidrio</strong><small>Botellas y frascos de vidrio.</small></div>
+          </div>
+          <p class="prior-note">💡 Las pilas necesitan un punto de recolección especial. El cartón sucio de comida no va con el cartón limpio.</p>
+        </div>
+
+        <div class="search-section">
+          <h3>🔍 ¿Dónde desecho esto?</h3>
+          <input type="text" id="searchInput" class="search-bar" placeholder="Escribe aquí..." onkeyup="searchWaste()">
+          <div class="tags-container">
+            <span class="tag-item" onclick="quickSearch('cartón sucio')">📦 cartón sucio</span>
+            <span class="tag-item" onclick="quickSearch('pilas')">🔋 pilas</span>
+            <span class="tag-item" onclick="quickSearch('botella plástico')">🧴 botella plástico</span>
+            <span class="tag-item" onclick="quickSearch('vidrio')">🍾 vidrio</span>
+            <span class="tag-item" onclick="quickSearch('manzana')">🍎 manzana</span>
+          </div>
+          <div id="searchResult" style="margin-top: 15px; font-weight: 700; color: #27ae60;"></div>
+        </div>
+
+        <div class="game-banner-btn" onclick="scrollToGame()">
+          🕹️ ¡Pondré a prueba tu conocimiento! 🐤
+        </div>
+
+        <div id="gameArea" class="game-area">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: 12px; padding: 0 10px;">
+            <span>Puntuación: <span id="score" style="color: #00a8ff; font-size: 1.3rem;">0</span></span>
+            <span style="font-size: 1.2rem;">Vidas: <span id="livesContainer">❤️❤️❤️</span></span>
+          </div>
+          
+          <h3 style="text-align: center; margin-bottom: 8px; color: #0288d1;">¡Clasifica cada residuo en su tacho!</h3>
+          <p class="game-instructions">Arrastra el residuo al tacho o <strong>haz clic en un residuo y luego en el tacho</strong> correspondiente.</p>
+          <div id="gameFeedback" role="status" aria-live="polite" class="game-feedback">Selecciona un residuo para comenzar.</div>
+
+          <div class="items-container" id="itemsContainer">
+            <div class="draggable-item" draggable="true" ondragstart="drag(event)" onclick="selectWaste(this)" tabindex="0" onkeydown="wasteKey(event,this)" id="item1" data-type="organico" title="Plátano">🍌</div>
+            <div class="draggable-item" draggable="true" ondragstart="drag(event)" onclick="selectWaste(this)" tabindex="0" onkeydown="wasteKey(event,this)" id="item2" data-type="plastico" title="Lata">🥫</div>
+            <div class="draggable-item" draggable="true" ondragstart="drag(event)" onclick="selectWaste(this)" tabindex="0" onkeydown="wasteKey(event,this)" id="item3" data-type="papel" title="Caja de Cartón">📦</div>
+            <div class="draggable-item" draggable="true" ondragstart="drag(event)" onclick="selectWaste(this)" tabindex="0" onkeydown="wasteKey(event,this)" id="item4" data-type="papel" title="Periódico">📰</div>
+            <div class="draggable-item" draggable="true" ondragstart="drag(event)" onclick="selectWaste(this)" tabindex="0" onkeydown="wasteKey(event,this)" id="item5" data-type="vidrio" title="Botella de vidrio">🍾</div>
+            <div class="draggable-item" draggable="true" ondragstart="drag(event)" onclick="selectWaste(this)" tabindex="0" onkeydown="wasteKey(event,this)" id="item6" data-type="plastico" title="Botella Plástica">🧴</div>
+          </div>
+
+          <!-- TACHOS CON INTERACCIÓN REAL -->
+          <div class="tachos-game-wrapper">
+            <img src="tachos.png" class="tachos-img-bg" alt="Tachos de Reciclaje" onerror="this.onerror=null; this.src='https://via.placeholder.com/750x200/00a8ff/ffffff?text=tachos.png';">
+            
+            <div class="tachos-drop-zones">
+              <div class="drop-zone" data-bin="organico" role="button" tabindex="0" onkeydown="binKey(event,this)" onclick="chooseBin(this.dataset.bin)" ondrop="drop(event, 'organico')" ondragover="allowDrop(event)" ondragenter="highlightZone(this)" ondragleave="unhighlightZone(this)" title="Marrón: Orgánico"></div>
+              <div class="drop-zone" data-bin="plastico" role="button" tabindex="0" onkeydown="binKey(event,this)" onclick="chooseBin(this.dataset.bin)" ondrop="drop(event, 'plastico')" ondragover="allowDrop(event)" ondragenter="highlightZone(this)" ondragleave="unhighlightZone(this)" title="Amarillo: Plástico y Latas"></div>
+              <div class="drop-zone" data-bin="papel" role="button" tabindex="0" onkeydown="binKey(event,this)" onclick="chooseBin(this.dataset.bin)" ondrop="drop(event, 'papel')" ondragover="allowDrop(event)" ondragenter="highlightZone(this)" ondragleave="unhighlightZone(this)" title="Azul: Papel y Cartón"></div>
+              <div class="drop-zone" data-bin="vidrio" role="button" tabindex="0" onkeydown="binKey(event,this)" onclick="chooseBin(this.dataset.bin)" ondrop="drop(event, 'vidrio')" ondragover="allowDrop(event)" ondragenter="highlightZone(this)" ondragleave="unhighlightZone(this)" title="Verde: Vidrio"></div>
+            </div>
+          </div>
+
+          <button class="btn btn-white" style="margin-top: 15px; border: 2px solid #00a8ff; color: #00a8ff;" onclick="resetGame()">🔄 Reiniciar Juego</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. ECORETO -->
+    <section id="tab-ecoreto" class="section-tab">
+      <div class="colored-section-reto">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+          <div>
+            <h2 style="color: #27ae60;">🍃 EcoReto</h2>
+            <p style="color: #555;">Registra lo que recolectas esta semana</p>
+          </div>
+          <div class="week-tabs">
+            <button class="week-btn active" onclick="setWeek(1, this)">Semana 1</button>
+            <button class="week-btn" onclick="setWeek(2, this)">Semana 2</button>
+            <button class="week-btn" onclick="setWeek(3, this)">Semana 3</button>
+            <button class="week-btn" onclick="setWeek(4, this)">Semana 4</button>
+          </div>
+        </div>
+
+        <p style="background: #ffffff; padding: 12px; border-radius: 12px; margin: 15px 0; font-weight: 700; color: #27ae60; border: 1px dashed #2ecc71;">
+          🍃 Selecciona la cantidad de materiales que recolectaste esta semana.
+        </p>
+
+        <div class="counters-grid">
+          <div class="counter-card">
+            <div style="font-size: 2.5rem;">🍾</div>
+            <h4>Botellas (plástico)</h4>
+            <div class="counter-controls">
+              <button class="btn-circle" onclick="changeCount('c1', -1)">-</button>
+              <span id="c1" class="count-val">10</span>
+              <button class="btn-circle" onclick="changeCount('c1', 1)">+</button>
+            </div>
+            <small>unidades</small>
+          </div>
+
+          <div class="counter-card">
+            <div style="font-size: 2.5rem;">📄</div>
+            <h4>Papel</h4>
+            <div class="counter-controls">
+              <button class="btn-circle" onclick="changeCount('c2', -1)">-</button>
+              <span id="c2" class="count-val">20</span>
+              <button class="btn-circle" onclick="changeCount('c2', 1)">+</button>
+            </div>
+            <small>unidades</small>
+          </div>
+
+          <div class="counter-card">
+            <div style="font-size: 2.5rem;">📦</div>
+            <h4>Cartón</h4>
+            <div class="counter-controls">
+              <button class="btn-circle" onclick="changeCount('c3', -1)">-</button>
+              <span id="c3" class="count-val">8</span>
+              <button class="btn-circle" onclick="changeCount('c3', 1)">+</button>
+            </div>
+            <small>unidades</small>
+          </div>
+
+          <div class="counter-card">
+            <div style="font-size: 2.5rem;">🔘</div>
+            <h4>Chapitas (metal)</h4>
+            <div class="counter-controls">
+              <button class="btn-circle" onclick="changeCount('c4', -1)">-</button>
+              <span id="c4" class="count-val">15</span>
+              <button class="btn-circle" onclick="changeCount('c4', 1)">+</button>
+            </div>
+            <small>unidades</small>
+          </div>
+
+          <div class="counter-card">
+            <div style="font-size: 2.5rem;">🍃</div>
+            <h4>Otros (aprovechables)</h4>
+            <div class="counter-controls">
+              <button class="btn-circle" onclick="changeCount('c5', -1)">-</button>
+              <span id="c5" class="count-val">5</span>
+              <button class="btn-circle" onclick="changeCount('c5', 1)">+</button>
+            </div>
+            <small>unidades</small>
+          </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <label style="font-weight: 700;">✏️ Agregar observaciones (opcional):</label>
+          <textarea placeholder="Ej: Traje botellas de mi casa..." style="width: 100%; padding: 10px; border-radius: 12px; border: 2px solid #2ecc71; margin-top: 5px; font-family: inherit;"></textarea>
+        </div>
+
+        <button class="btn btn-orange" style="width: 100%; justify-content: center; margin-top: 20px; font-size: 1.1rem;" onclick="saveWeekData()">
+          💾 Guardar semana
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. ECOARTE -->
+    <section id="tab-ecoarte" class="section-tab"><div class="colored-section-arte eco-new">
+      <h2 style="text-align:center;color:#7b1fa2;margin-bottom:16px">🎨 EcoArte: Taller de Creatividad</h2>
+      <div class="art-actions"><button class="btn-art-action btn-upload" onclick="triggerFileUpload()">📷 Subir mi manualidad</button><button class="btn-art-action btn-download" onclick="document.getElementById('ecoArteGallery').scrollIntoView({behavior:'smooth'})">📄 Descargar Moldes/Plantillas</button></div>
+      <h3 style="color:#6a1b9a;margin:18px 0 12px">⭐ Inspiración Reciente y Plantillas</h3>
+      <div class="gallery-grid" id="ecoArteGallery"><article class="art-card eco-project-card"><img src="masetero.jpg" class="art-img" alt="Macetas Pingüino"><div class="art-info"><h4>Macetas Pingüino</h4><p>Cortar la base de la botella plástica, pintar el cuerpo blanco y negro, y colocar una plantita.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(0)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(0)">📄 Descargar PDF</button></div></article>
+<article class="art-card eco-project-card"><img src="perro.jpg" class="art-img" alt="Perrito Reciclado"><div class="art-info"><h4>Perrito Reciclado</h4><p>Manualidad de perrito con materiales reciclados como cajas, conos de papel y tapas de botellas.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(1)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(1)">📄 Descargar PDF</button></div></article>
+<article class="art-card eco-project-card"><img src="llaveros.jpg" class="art-img" alt="Llaveros con Tapas"><div class="art-info"><h4>Llaveros con Tapas</h4><p>Perforar una tapa plástica, decorarla con caras de fomi o pintura y colocarle argolla.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(2)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(2)">📄 Descargar PDF</button></div></article>
+<article class="art-card eco-project-card"><img src="alcancia.jpg" class="art-img" alt="Alcancías Chanchito"><div class="art-info"><h4>Alcancías Chanchito</h4><p>Hacer una ranura en la botella plástica, colocar patas de tapas y orejas de fomi.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(3)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(3)">📄 Descargar PDF</button></div></article>
+<article class="art-card eco-project-card"><img src="tres_en_raya.jpg" class="art-img" alt="Tres en Raya"><div class="art-info"><h4>Tres en Raya</h4><p>Tablero cuadrado de cartón con cuadrícula pintada y fichas hechas de tapas con X y O.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(4)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(4)">📄 Descargar PDF</button></div></article></div>
+    </div></section>
+    <!-- 5. GALERÍA -->
+    <section id="tab-galeria" class="section-tab">
+      <div class="colored-section-galeria">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="color: #1976d2;">🏆 Nuestras obras finalizadas</h2>
+            <p style="color: #1565c0; font-size: 0.9rem;">Campaña Actual: Octubre 2026</p>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-orange" onclick="triggerFileUpload()">📷 Subir mi foto</button>
+            <button class="btn btn-white" style="border: 2px solid #3498db; color: #3498db;" onclick="openModal('Campañas Anteriores', 'Mostrando archivo de fotos de los meses pasados.')">🗓️ Ver Anteriores</button>
+          </div>
+        </div>
+
+        <div class="gallery-grid" id="mainPublicGallery">
+          <div class="art-card">
+            <img src="masetero.jpg" class="art-img" alt="Maceteros 3°A">
+            <div class="art-info"><strong>3°A</strong> Maceteros de Pingüino</div>
+          </div>
+          <div class="art-card">
+            <img src="llaveros.jpg" class="art-img" alt="Llaveros 4°B">
+            <div class="art-info"><strong>4°B</strong> Llaveros de Tapas</div>
+          </div>
+          <div class="art-card">
+            <img src="perro.jpg" class="art-img" alt="Perrito 5°A">
+            <div class="art-info"><strong>5°A</strong> Perrito Reciclado</div>
+          </div>
+          <div class="art-card">
+            <img src="alcancia.jpg" class="art-img" alt="Alcancías 6°B">
+            <div class="art-info"><strong>6°B</strong> Alcancías Chanchito</div>
+          </div>
+          <div class="art-card">
+            <img src="tres_en_raya.jpg" class="art-img" alt="Tres en Raya 2°A">
+            <div class="art-info"><strong>2°A</strong> Juego Tres en Raya</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. MIS LOGROS -->
+    <section id="tab-logros" class="section-tab">
+      <div class="colored-section-logros">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="color: #e67e22;">🍃 Mis Logros</h2>
+            <p style="color: #d35400; font-weight: 700;">¡Juntos hacemos la diferencia!</p>
+          </div>
+          
+          <div>
+            <span>📅 </span>
+            <select class="month-select" id="logrosMonthSelect" onchange="changeLogrosMonth()">
+              <option value="Octubre 2026">Mes: Octubre 2026</option>
+              <option value="Noviembre 2026">Mes: Noviembre 2026</option>
+              <option value="Diciembre 2026">Mes: Diciembre 2026</option>
+              <option value="Enero 2027">Mes: Enero 2027</option>
+              <option value="Febrero 2027">Mes: Febrero 2027</option>
+              <option value="Marzo 2027">Mes: Marzo 2027</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="achievements-grid">
+          <div class="achievement-card">
+            <div class="logro-icon">♻️</div><h4>Materiales recolectados</h4>
+            <div class="logro-number" id="logroRecolectados">200</div>
+            <small>en total 🌱</small>
+          </div>
+          <div class="achievement-card">
+            <div class="logro-icon">🔄</div><h4>Materiales reutilizados</h4>
+            <div class="logro-number" id="logroReutilizados">130</div>
+            <small>en total 🌱</small>
+          </div>
+          <div class="achievement-card">
+            <div class="logro-icon">📦</div><h4>Materiales por reutilizar</h4>
+            <div class="logro-number" id="logroReducidos">70</div>
+            <small>Por aprovechar 🌱</small>
+          </div>
+          <div class="achievement-card achievement-goal">
+            <div class="logro-icon">🎯</div><h4>Meta del mes</h4>
+            <div class="logro-goal-number">300 <span>materiales</span></div>
+            <div class="progress-bar-bg"><div class="progress-bar-fill" id="logroMetaBar" style="width: 67%;"></div></div>
+            <div class="logro-progress-info"><span>Acumulado: <strong id="logroAcumulado">200</strong></span><strong id="logroMetaPct">67%</strong></div>
+          </div>
+        </div>
+
+        <div style="background: #ffffff; border: 2px dashed #f1c40f; border-radius: 20px; padding: 20px; text-align: center; margin-top: 25px;">
+          <span style="font-size: 2.5rem;">🏆</span>
+          <h3 style="color: #d63031; margin-top: 5px;">¡Lo estás haciendo genial!</h3>
+          <p style="color: #636e72; font-weight: 600;">Cada pequeño esfuerzo cuenta. ❤️</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+
+  <!-- ECOARTE: DETALLE Y REGISTRO -->
+  <div id="ecoDetailOverlay" class="eco-overlay" role="dialog" aria-modal="true" aria-label="Detalle de manualidad" hidden>
+    <div class="eco-dialog"><div class="eco-dialog-head"><button class="eco-back" onclick="closeEcoDetail()" aria-label="Volver">←</button><h2 id="ecoDetailTitle"></h2><button class="eco-close" onclick="closeEcoDetail()" aria-label="Cerrar">×</button></div>
+      <div class="eco-detail-body"><div class="eco-detail-left"><div class="eco-image-wrap"><img id="ecoDetailImage" alt="Manualidad"><span>🌱 Manualidad ecológica</span></div><h3>Procedimiento</h3><ol id="ecoSteps"></ol></div><div class="eco-materials"><h3>📋 Materiales necesarios</h3><ul id="ecoMaterialList"></ul><div class="eco-mascot">🐧 <small>¡Y listo! Ya tienes tu maceta ecológica.</small></div></div></div>
+      <div class="eco-dialog-actions"><button class="eco-view" onclick="openEcoPreview()">👁 Ver manualidad</button><button class="eco-blue" onclick="downloadEcoGuide()">📄 Descargar guía / Molde PDF</button><button class="eco-green" onclick="showEcoRegister()">☑ Registrar manualidad realizada</button></div>
+    </div>
+  </div>
+  <div id="ecoRegisterOverlay" class="eco-overlay" role="dialog" aria-modal="true" aria-label="Registrar manualidad" hidden>
+    <div class="eco-register-dialog"><div class="eco-register-head">☑ Registrar manualidad realizada <button onclick="closeEcoRegister()" aria-label="Cerrar">×</button></div><form id="ecoRegisterForm" onsubmit="saveEcoRegister(event)">
+      <div class="eco-product-row"><img id="ecoRegisterImage" alt="Manualidad"><div><strong id="ecoRegisterName"></strong></div><div class="eco-quantity"><label for="ecoProductQuantity">Cantidad de productos elaborados</label><div><button type="button" onclick="changeEcoProduct(-1)">−</button><input id="ecoProductQuantity" type="number" min="1" max="99999" value="1" required><button type="button" onclick="changeEcoProduct(1)">+</button></div></div></div>
+      <h4>Materiales utilizados</h4><div class="eco-table-wrap"><table class="eco-table"><thead><tr><th>Material</th><th>Cantidad utilizada</th></tr></thead><tbody id="ecoRegisterMaterials"></tbody></table></div>
+      <p class="eco-help">*Registra solo los materiales que realmente se utilizaron en la manualidad.</p><div class="eco-register-actions"><button type="button" class="eco-cancel" onclick="closeEcoRegister()">✕ Cancelar</button><button type="submit" class="eco-green">💾 Guardar registro</button></div>
+    </form></div>
+  </div>
+
+  <!-- MODAL GENERAL -->
+  <div id="infoModal" class="modal">
+    <div class="modal-content">
+      <h3 id="modalTitle" style="margin-bottom: 10px; color: #27ae60;"></h3>
+      <p id="modalBody" style="color: #666; margin-bottom: 20px; white-space: pre-line;"></p>
+      <button class="btn btn-orange" onclick="closeModal()">¡Entendido!</button>
+    </div>
+  </div>
+
+
+<div id="authOverlay" class="auth-overlay" hidden>
+  <div class="auth-panel" role="dialog" aria-modal="true" aria-labelledby="authHeading">
+    <h2 id="authHeading">🌱 Bienvenido a EcoReto</h2>
+    <p>Regístrate como estudiante o inicia sesión.</p>
+    <form id="authForm">
+      <div id="authNameBox"><label for="authName">Nombre</label><input id="authName" maxlength="90" autocomplete="name" required></div>
+      <label for="authEmail">Correo electrónico</label><input id="authEmail" type="email" autocomplete="email" required>
+      <label for="authPassword">Contraseña</label><input id="authPassword" type="password" minlength="8" autocomplete="new-password" required>
+      <p id="authError" class="auth-error" role="alert"></p>
+      <div class="auth-actions">
+        <button type="submit" class="auth-action auth-primary" id="authSubmit">🌱 Crear cuenta</button>
+        <button type="button" class="auth-action auth-outline" onclick="toggleAuthMode()" id="authModeButton">🔑 Ya tengo cuenta</button>
+        <button type="button" class="auth-action auth-link" onclick="resetEcoPassword()">¿Olvidaste tu contraseña?</button>
+        <button type="button" class="auth-action auth-close" onclick="closeAuth()">✕ Cerrar</button>
+      </div>
+    </form>
+  </div>
+</div>
+  <script>
+    function switchTab(tabId) {
+      document.querySelectorAll('.section-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+      const activeBtn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if(activeBtn) activeBtn.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function searchWaste() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      const res = document.getElementById('searchResult');
+      if (!q) { res.innerHTML = ""; return; }
+      if (q.includes('pila')) {
+        res.innerHTML = "⚠️ Las pilas van en contenedores especiales de Residuos Peligrosos.";
+      } else if (q.includes('carton sucio') || q.includes('pizza')) {
+        res.innerHTML = "🍂 El cartón sucio con grasa o comida va al tacho de Orgánicos / No Reciclables.";
+      } else if (q.includes('botella') || q.includes('plastico')) {
+        res.innerHTML = "🥤 La botella plástica limpia va al tacho Amarillo (Plástico).";
+      } else if (q.includes('vidrio')) {
+        res.innerHTML = "🍾 El vidrio va en el tacho Verde (Vidrio).";
+      } else if (q.includes('manzana')) {
+        res.innerHTML = "🍎 Restos de frutas van en el tacho Marrón (Orgánico).";
+      } else {
+        res.innerHTML = "🔍 Revisa si está limpio y seco para clasificarlo en Papel o Plástico.";
+      }
+    }
+
+    function quickSearch(val) {
+      document.getElementById('searchInput').value = val;
+      searchWaste();
+    }
+
+    function scrollToGame() {
+      document.getElementById('gameArea').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* JUEGO: ARRASTRAR O SELECCIONAR CON CLIC */
+    let score = 0;
+    let lives = 3;
+    let selectedWasteId = null;
+    function feedback(message) {
+      document.getElementById('gameFeedback').textContent = message;
+    }
+    function selectWaste(item) {
+      if (lives <= 0 || item.style.display === 'none') return;
+      document.querySelectorAll('.draggable-item').forEach(el => el.classList.remove('selected-waste'));
+      selectedWasteId = item.id;
+      item.classList.add('selected-waste');
+      feedback('Seleccionaste ' + item.title + '. Ahora haz clic en el tacho correcto.');
+    }
+    function wasteKey(event, item) {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); selectWaste(item); }
+    }
+    function binKey(event, zone) {
+      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); chooseBin(zone.dataset.bin); }
+    }
+    function chooseBin(binType) {
+      if (lives <= 0) { feedback('💔 Sin vidas. Pulsa Reiniciar Juego.'); return; }
+      if (!selectedWasteId) { feedback('👆 Primero selecciona un residuo.'); return; }
+      classifyWaste(selectedWasteId, binType);
+    }
+    function allowDrop(ev) { ev.preventDefault(); }
+    function highlightZone(zone) { zone.classList.add('drag-over'); }
+    function unhighlightZone(zone) { zone.classList.remove('drag-over'); }
+    function drag(ev) {
+      if (lives <= 0) { ev.preventDefault(); return; }
+      selectWaste(ev.target);
+      ev.dataTransfer.setData('text/plain', ev.target.id);
+    }
+    function drop(ev, binType) {
+      ev.preventDefault();
+      unhighlightZone(ev.currentTarget);
+      const id = ev.dataTransfer.getData('text/plain');
+      if (id) classifyWaste(id, binType);
+    }
+    function classifyWaste(id, binType) {
+      if (lives <= 0) return;
+      const item = document.getElementById(id);
+      if (!item || item.style.display === 'none') return;
+      if (item.dataset.type === binType) {
+        score += 10;
+        document.getElementById('score').textContent = score;
+        item.style.display = 'none';
+        feedback('🎉 ¡Correcto! ' + item.title + ' clasificado. +10 puntos.');
+        selectedWasteId = null;
+        const remaining = [...document.querySelectorAll('.draggable-item')].filter(el => el.style.display !== 'none');
+        if (remaining.length === 0) feedback('🏆 ¡Excelente! Clasificaste todos los residuos. Puntuación: ' + score);
+      } else {
+        lives -= 1;
+        updateLivesDisplay();
+        feedback(lives > 0 ? '❌ Ese no es el tacho de ' + item.title + '. Inténtalo de nuevo. Te quedan ' + lives + ' vidas.' : '💔 Juego terminado. Pulsa Reiniciar Juego.');
+      }
+    }
+    function updateLivesDisplay() {
+      document.getElementById('livesContainer').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
+    }
+    function resetGame() {
+      score = 0; lives = 3; selectedWasteId = null;
+      document.getElementById('score').textContent = '0';
+      updateLivesDisplay();
+      document.querySelectorAll('.draggable-item').forEach(item => {
+        item.style.display = 'inline-block';
+        item.classList.remove('selected-waste');
+      });
+      feedback('Selecciona un residuo para comenzar.');
+    }
+
+    function changeCount(id, change) {
+      const el = document.getElementById(id);
+      let val = parseInt(el.innerText) + change;
+      if (val < 0) val = 0;
+      el.innerText = val;
+    }
+
+    function setWeek(w, btn) {
+      document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function saveWeekData() {
+      openModal('💾 ¡Semana Guardada!', 'Tus datos de recolección de esta semana se han registrado correctamente.');
+    }
+
+    /* SUBIDA DE FOTOS */
+    function triggerFileUpload() {
+      document.getElementById('fileInput').click();
+    }
+
+    function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imgUrl = e.target.result;
+          
+          const ecoArteGallery = document.getElementById('ecoArteGallery');
+          const newArtCard = document.createElement('div');
+          newArtCard.className = 'art-card';
+          newArtCard.innerHTML = `
+            <img src="${imgUrl}" class="art-img" alt="Manualidad subida">
+            <div class="art-info">
+              <h4>¡Nueva Manualidad Subida!</h4>
+              <p style="font-size: 0.8rem; color: #666;">Subido recientemente por el alumno.</p>
+            </div>
+            <button class="btn-dl-item" onclick="openModal('Guía Personalizada', 'Manualidad creada por el estudiante.')">📄 Descargar Guía</button>
+          `;
+          ecoArteGallery.prepend(newArtCard);
+
+          const mainGallery = document.getElementById('mainPublicGallery');
+          const newGalleryCard = document.createElement('div');
+          newGalleryCard.className = 'art-card';
+          newGalleryCard.innerHTML = `
+            <img src="${imgUrl}" class="art-img" alt="Manualidad subida">
+            <div class="art-info"><strong>Nuevo</strong> Proyecto Reciente</div>
+          `;
+          mainGallery.prepend(newGalleryCard);
+
+          openModal('🎉 ¡Foto publicada con éxito!', 'Tu imagen ha sido subida y publicada automáticamente tanto en la Galería como en EcoArte.');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    /* LOGROS DINÁMICOS */
+    function updateLogroVal(elemId, change) {
+      const elem = document.getElementById(elemId);
+      let currentVal = parseInt(elem.innerText) + change;
+      if (currentVal < 0) currentVal = 0;
+      elem.innerText = currentVal;
+
+      if (elemId === 'logroRecolectados') {
+        let pct = Math.round((currentVal / 300) * 100);
+        if (pct > 100) pct = 100;
+        document.getElementById('logroMetaBar').style.width = pct + '%';
+        document.getElementById('logroMetaPct').innerText = pct + '%';
+      }
+    }
+
+    function changeLogrosMonth() {
+      const selectedMonth = document.getElementById('logrosMonthSelect').value;
+      openModal('📅 Mes Cambiado', 'Ahora estás consultando el panel correspondiente a: ' + selectedMonth);
+    }
+
+    function downloadPdf(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename.replace('.pdf', '_Instrucciones.txt');
+      link.click();
+      
+      openModal('📄 Descarga de Molde / Guía', 'Se ha descargado la guía paso a paso (' + filename + '):\n\n' + content);
+    }
+
+    function openModal(title, text) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalBody').innerText = text;
+      document.getElementById('infoModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('infoModal').style.display = 'none';
+    }
+
+    /* EcoArte: datos y registro local. Firebase se integrará en una etapa posterior. */
+    const ecoProjects = [{"name": "Macetas Pingüino", "image": "masetero.jpg", "description": "Cortar la base de la botella plástica, pintar el cuerpo blanco y negro, y colocar una plantita.", "pdf": "Macetas_Pinguino_Moldes.pdf", "materials": [["Botellas de plástico", "🧴", 1], ["Pintura", "🎨", 1], ["Cartón / goma eva", "📦", 1]], "steps": ["Lava y seca la botella.", "Pinta la botella del color que prefieras.", "Decora con los detalles del pingüino (ojos, pico, alas y patas).", "Coloca una planta pequeña en la parte superior."]}, {"name": "Perrito Reciclado", "image": "perro.jpg", "description": "Manualidad de perrito con materiales reciclados como cajas, conos de papel y tapas de botellas.", "pdf": "Perrito_Reciclado_Moldes.pdf", "materials": [["Cajas de cartón", "📦", 1], ["Conos de papel", "🧻", 2], ["Tapas de botellas", "🔘", 4]], "steps": ["Forma el cuerpo con una caja de cartón.", "Agrega las patas con conos de papel.", "Recorta y pega las orejas y la cola.", "Decora con tapas y pintura."]}, {"name": "Llaveros con Tapas", "image": "llaveros.jpg", "description": "Perforar una tapa plástica, decorarla con caras de fomi o pintura y colocarle argolla.", "pdf": "Llaveros_Tapas_Guia.pdf", "materials": [["Tapas de botellas", "🔘", 1], ["Cartón / goma eva", "📦", 1], ["Argollas", "🗝️", 1]], "steps": ["Limpia las tapas de botellas.", "Perfora con ayuda de un adulto.", "Decora las tapas con pintura o goma eva.", "Coloca la argolla de llavero."]}, {"name": "Alcancías Chanchito", "image": "alcancia.jpg", "description": "Hacer una ranura en la botella plástica, colocar patas de tapas y orejas de fomi.", "pdf": "Alcancia_Chanchito_Moldes.pdf", "materials": [["Botellas de plástico", "🧴", 1], ["Tapas de botellas", "🔘", 4], ["Cartón / goma eva", "📦", 1]], "steps": ["Limpia la botella y marca la ranura.", "Pide ayuda a un adulto para realizar el corte.", "Pega cuatro tapas como patas.", "Añade orejas, ojos y decoración."]}, {"name": "Tres en Raya", "image": "tres_en_raya.jpg", "description": "Tablero cuadrado de cartón con cuadrícula pintada y fichas hechas de tapas con X y O.", "pdf": "Tres_En_Raya_Guia.pdf", "materials": [["Cajas de cartón", "📦", 1], ["Tapas de botellas", "🔘", 10], ["Pintura", "🎨", 1]], "steps": ["Recorta un tablero de cartón.", "Dibuja la cuadrícula de 3 × 3.", "Pinta cinco tapas con X y cinco con O.", "¡Ya puedes jugar!"]}];
+    let ecoCurrentProject = 0;
+    const ecoStorageKey = 'ecoreto_ecoarte_registros_v1';
+    function ecoRecords(){try{const a=JSON.parse(localStorage.getItem(ecoStorageKey)||'[]');return Array.isArray(a)?a:[]}catch{return []}}
+    function showEcoDetail(i){ecoCurrentProject=i;const p=ecoProjects[i];document.getElementById('ecoDetailTitle').textContent='🐧 '+p.name;document.getElementById('ecoDetailImage').src=p.image;document.getElementById('ecoDetailImage').alt=p.name;document.getElementById('ecoSteps').replaceChildren(...p.steps.map(x=>{const li=document.createElement('li');li.textContent=x;return li}));document.getElementById('ecoMaterialList').replaceChildren(...p.materials.map(m=>{const li=document.createElement('li');li.textContent=m[1]+'  '+m[0];return li}));document.getElementById('ecoDetailOverlay').hidden=false;document.body.style.overflow='hidden'}
+    function closeEcoDetail(){document.getElementById('ecoDetailOverlay').hidden=true;document.body.style.overflow=''}
+    function showEcoRegister(){if(!window.ecoIsTeacher?.()){alert('Solo el docente puede registrar manualidades.');return;} const p=ecoProjects[ecoCurrentProject];document.getElementById('ecoRegisterImage').src=p.image;document.getElementById('ecoRegisterName').textContent=p.name;document.getElementById('ecoProductQuantity').value=1;document.getElementById('ecoRegisterMaterials').replaceChildren(...p.materials.map((m,i)=>{const tr=document.createElement('tr'),td=document.createElement('td'),q=document.createElement('td'),input=document.createElement('input');td.textContent=m[1]+' '+m[0];input.type='number';input.min='0';input.max='999999';input.step='1';input.value=m[2];input.dataset.material=m[0];input.required=true;input.setAttribute('aria-label','Cantidad utilizada de '+m[0]);q.appendChild(input);tr.append(td,q);return tr}));document.getElementById('ecoDetailOverlay').hidden=true;document.getElementById('ecoRegisterOverlay').hidden=false}
+    function closeEcoRegister(){document.getElementById('ecoRegisterOverlay').hidden=true;document.getElementById('ecoDetailOverlay').hidden=false}
+    function changeEcoProduct(delta){const input=document.getElementById('ecoProductQuantity');input.value=Math.max(1,Math.min(99999,(parseInt(input.value)||1)+delta))}
+    function saveEcoRegister(event){event.preventDefault();if(!window.ecoIsTeacher?.()){alert('Solo el docente puede registrar manualidades.');return;}const count=Number(document.getElementById('ecoProductQuantity').value);if(!Number.isSafeInteger(count)||count<1||count>99999){alert('Ingresa una cantidad válida de productos.');return}const materials=Array.from(document.querySelectorAll('#ecoRegisterMaterials input')).map(input=>({nombre:input.dataset.material,cantidad:Number(input.value)}));if(materials.some(m=>!Number.isSafeInteger(m.cantidad)||m.cantidad<0||m.cantidad>999999)){alert('Ingresa cantidades válidas de materiales.');return}if(materials.every(m=>m.cantidad===0)){alert('Registra al menos un material utilizado.');return}const records=ecoRecords();records.push({proyecto:ecoProjects[ecoCurrentProject].name,productos:count,materiales:materials,fecha:new Date().toISOString()});try{localStorage.setItem(ecoStorageKey,JSON.stringify(records))}catch(e){alert('No se pudo guardar en este navegador. Verifica el almacenamiento disponible.');return}document.getElementById('ecoRegisterOverlay').hidden=true;document.body.style.overflow='';updateEcoLogros();openModal('✅ Registro guardado','Se registraron '+count+' productos de '+ecoProjects[ecoCurrentProject].name+'. Los materiales utilizados ya se reflejan en Mis Logros (guardado local de este navegador).')}
+    function updateEcoLogros(){const records=ecoRecords();if(!records.length)return;const reused=records.reduce((sum,r)=>sum+(r.materiales||[]).reduce((a,m)=>a+(Number(m.cantidad)||0),0),0);const elem=document.getElementById('logroReutilizados');if(elem)elem.textContent=reused;const collected=Number(document.getElementById('logroRecolectados')?.textContent)||0;const pending=document.getElementById('logroReducidos');if(pending)pending.textContent=Math.max(0,collected-reused)}
+    function openEcoPreview(){openModal('🎨 '+ecoProjects[ecoCurrentProject].name,ecoProjects[ecoCurrentProject].description+'\n\n'+ecoProjects[ecoCurrentProject].steps.map((s,i)=>(i+1)+'. '+s).join('\n'))}
+    function downloadEcoGuide(index){const p=ecoProjects[index===undefined?ecoCurrentProject:index];const content=p.name+'\n\nMATERIALES\n'+p.materials.map(m=>'- '+m[0]).join('\n')+'\n\nPROCEDIMIENTO\n'+p.steps.map((x,i)=>(i+1)+'. '+x).join('\n');downloadPdf(p.pdf,content)}
+    window.addEventListener('DOMContentLoaded',updateEcoLogros);
+
+  </script>
+  <script>
+    // El modal debe abrir incluso si Firebase aún no está configurado o se abre con file://.
+    window.openAuth = function () {
+      document.getElementById('authOverlay').hidden = false;
+      document.getElementById('authError').textContent = '';
+    };
+    window.closeAuth = function () { document.getElementById('authOverlay').hidden = true; };
+    window.toggleAuthMode = function () {
+      const nameBox = document.getElementById('authNameBox');
+      const register = nameBox.hidden;
+      nameBox.hidden = !register;
+      document.getElementById('authName').required = register;
+      document.getElementById('authSubmit').textContent = register ? '🌱 Crear cuenta' : '🔑 Iniciar sesión';
+      document.getElementById('authModeButton').textContent = register ? '🔑 Ya tengo cuenta' : '🌱 Crear cuenta';
+      document.getElementById('authPassword').autocomplete = register ? 'new-password' : 'current-password';
+      document.getElementById('authError').textContent = '';
+      window.ecoAuthMode = register ? 'register' : 'login';
+    };
+    window.ecoAuthMode = 'register';
+    window.ecoLogout = function(){ alert('Conecta Firebase para cerrar sesión.'); };
+    window.resetEcoPassword = function(){ document.getElementById('authError').textContent = 'Conecta Firebase para recuperar la contraseña.'; };
+    document.getElementById('authForm').addEventListener('submit', function(e) {
+      if (!window.ecoFirebaseReady) {
+        e.preventDefault();
+        document.getElementById('authError').textContent = 'Firebase no está conectado. Completa firebase-config.js y abre la página desde GitHub Pages o un servidor HTTP.';
+      }
+    });
+  </script>
+  <script type="module" src="./firebase-auth.js"></script>
+</body>
+</html>

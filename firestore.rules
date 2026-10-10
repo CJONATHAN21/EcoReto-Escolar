@@ -1,0 +1,21 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function logged() { return request.auth != null; }
+    function teacher() {
+      return logged() && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'docente';
+    }
+    match /usuarios/{uid} {
+      allow create: if logged() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['nombre','correo','rol','creadoEn'])
+        && request.resource.data.rol == 'alumno'
+        && request.resource.data.correo == request.auth.token.email;
+      allow read: if logged() && (request.auth.uid == uid || teacher());
+      allow update: if teacher() || (logged() && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre']));
+      allow delete: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
