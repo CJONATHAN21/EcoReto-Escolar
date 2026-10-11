@@ -139,16 +139,23 @@ function clearForm() {
   }
 }
 
+
 function canEdit() {
+  const selectedDate = $('retoDate')?.value || '';
+
   return (
     ready &&
     teacher &&
     !!student &&
     month === monthOf(today()) &&
     week === weekOf(today()) &&
+    !!selectedDate &&
+    selectedDate <= today() &&
+    weekOf(selectedDate) === week &&
     !busy
   );
 }
+
 
 window.ecoRetoCanEdit = canEdit;
 
