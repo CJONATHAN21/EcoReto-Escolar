@@ -237,6 +237,14 @@
 .auth-panel .auth-actions .auth-action:hover {filter:brightness(.96);transform:translateY(-1px)}
 .auth-panel .auth-actions .auth-action:focus-visible {outline:3px solid #ffbc42;outline-offset:2px}
 @media(max-width:430px){.auth-panel .auth-actions{grid-template-columns:1fr}}
+
+.eco-material-row{display:grid;grid-template-columns:68px minmax(0,1fr) 82px 35px;gap:7px;align-items:center;margin:8px 0}
+.eco-material-row input,.eco-material-row select{min-width:0;width:100%;box-sizing:border-box;padding:9px 6px;border:1px solid #d7cfe5;border-radius:8px;background:white;font:inherit}
+.eco-material-remove{border:0;border-radius:8px;background:#f3e5fa;color:#7e42b6;padding:9px;cursor:pointer}
+.eco-add-material{border:1px solid #a45bea;border-radius:8px;background:#f6eaff;color:#713ab2;padding:10px 14px;cursor:pointer;font-weight:700;margin-top:7px}
+.eco-material-editor{margin:14px 0}.eco-material-editor small{color:#667085}
+.eco-delete-btn{border:0;border-radius:8px;background:#ffe7e7;color:#a31d28;font-weight:700;padding:10px;cursor:pointer}
+@media(max-width:480px){.eco-material-row{grid-template-columns:54px minmax(0,1fr) 62px 30px;gap:4px}}
 </style>
 
 <style>
@@ -638,7 +646,7 @@
   <div id="ecoDetailOverlay" class="eco-overlay" role="dialog" aria-modal="true" aria-label="Detalle de manualidad" hidden>
     <div class="eco-dialog"><div class="eco-dialog-head"><button class="eco-back" onclick="closeEcoDetail()" aria-label="Volver">←</button><h2 id="ecoDetailTitle"></h2><button class="eco-close" onclick="closeEcoDetail()" aria-label="Cerrar">×</button></div>
       <div class="eco-detail-body"><div class="eco-detail-left"><div class="eco-image-wrap"><img id="ecoDetailImage" alt="Manualidad"><span>🌱 Manualidad ecológica</span></div><h3>Procedimiento</h3><ol id="ecoSteps"></ol></div><div class="eco-materials"><h3>📋 Materiales necesarios</h3><ul id="ecoMaterialList"></ul><div class="eco-mascot">🎨 <small id="ecoDetailFinish">¡Tu creación ecológica está lista!</small></div></div></div>
-      <div class="eco-dialog-actions"><button class="eco-view" onclick="openEcoPreview()">👁 Ver manualidad</button><button class="eco-blue" onclick="downloadEcoGuide()">📄 Descargar guía / Molde PDF</button><button id="ecoRegisterBtn" class="eco-green" onclick="showEcoRegister()">☑ Registrar manualidad realizada</button></div>
+      <div class="eco-dialog-actions"><button id="ecoDetailPdfBtn" class="eco-blue" onclick="downloadEcoGuide()">📄 Descargar guía / Molde PDF</button><button id="ecoRegisterBtn" class="eco-green" onclick="showEcoRegister()">☑ Registrar manualidad realizada</button></div>
     </div>
   </div>
   <div id="ecoRegisterOverlay" class="eco-overlay" role="dialog" aria-modal="true" aria-label="Registrar manualidad" hidden>
@@ -656,7 +664,7 @@
       <form id="ecoCreateForm"><label>Nombre de la manualidad<input name="nombre" required maxlength="100" placeholder="Ej. Robot de cartón"></label>
       <label>Descripción<textarea name="descripcion" required maxlength="600" rows="2"></textarea></label>
       <label>Fotografía de la manualidad (obligatoria)<input name="foto" type="file" accept="image/jpeg,image/png,image/webp" required></label>
-      <label>Materiales necesarios <small>(uno por línea: material | cantidad | emoji)</small><textarea name="materiales" rows="4" required placeholder="Botellas de plástico | 2 | 🧴&#10;Tapas de botellas | 4 | 🔘"></textarea></label>
+      <div class="eco-material-editor"><strong>Materiales necesarios</strong><small> Selecciona ícono, nombre y cantidad</small><div id="ecoMaterialRows"></div><button type="button" class="eco-add-material" onclick="addEcoMaterialRow()">＋ Agregar material</button></div>
       <label>Procedimiento <small>(un paso por línea)</small><textarea name="pasos" rows="5" required placeholder="Lava los materiales.&#10;Arma la figura.&#10;Decora."></textarea></label>
       <label>Enlace de guía PDF (opcional, HTTPS)<input name="pdf" type="url" placeholder="https://..."></label>
       <p id="ecoCreateStatus" class="eco-help"></p>
