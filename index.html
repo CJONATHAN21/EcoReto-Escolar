@@ -180,6 +180,17 @@
     @media(max-width:430px){#tab-logros .achievements-grid{grid-template-columns:1fr;}#tab-logros .achievement-card{min-height:150px;}}
 
   
+
+/* EcoArte conectado a Firebase */
+.eco-work-panel{margin-top:20px;background:#fff;border:1px solid #e6d4f6;border-radius:14px;padding:16px}
+.eco-work-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:12px 0;border-bottom:1px solid #eee}
+.eco-work-row:last-child{border-bottom:0}.eco-work-row small{display:block;color:#64748b}
+.eco-work-row button{border:0;border-radius:8px;padding:9px 13px;cursor:pointer;font-weight:700;margin:3px}
+.eco-work-row .approve{background:#00b887;color:white}.eco-work-row .observe{background:#f0e5fa;color:#6839a0}
+#ecoCreateForm label{display:block;margin:12px 0;font-weight:700;color:#33415f}
+#ecoCreateForm input,#ecoCreateForm textarea{display:block;width:100%;box-sizing:border-box;border:1px solid #d7cfe5;border-radius:8px;padding:10px;margin-top:6px;font:inherit}
+#ecoCreateForm small{font-weight:400;color:#6b7280}
+
 /* EcoArte - prototipo funcional */
 .eco-new{background:#f4e6f7;border:2px solid #b45bc5;border-radius:22px;padding:24px}
 .eco-new .gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
@@ -518,14 +529,14 @@
     <!-- 4. ECOARTE -->
     <section id="tab-ecoarte" class="section-tab"><div class="colored-section-arte eco-new">
       <h2 style="text-align:center;color:#7b1fa2;margin-bottom:16px">🎨 EcoArte: Taller de Creatividad</h2>
-      <div class="art-actions"><button class="btn-art-action btn-upload" onclick="triggerFileUpload()">📷 Subir mi manualidad</button><button class="btn-art-action btn-download" onclick="document.getElementById('ecoArteGallery').scrollIntoView({behavior:'smooth'})">📄 Descargar Moldes/Plantillas</button></div>
+      <div class="art-actions"><button id="ecoCreateBtn" hidden class="btn-art-action btn-upload" onclick="openEcoCreate()">📷 Subir mi manualidad</button><button class="btn-art-action btn-download" onclick="document.getElementById('ecoArteGallery').scrollIntoView({behavior:'smooth'})">📄 Descargar Moldes/Plantillas</button></div>
       <h3 style="color:#6a1b9a;margin:18px 0 12px">⭐ Inspiración Reciente y Plantillas</h3>
       <div class="gallery-grid" id="ecoArteGallery"><article class="art-card eco-project-card"><img src="masetero.jpg" class="art-img" alt="Macetas Pingüino"><div class="art-info"><h4>Macetas Pingüino</h4><p>Cortar la base de la botella plástica, pintar el cuerpo blanco y negro, y colocar una plantita.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(0)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(0)">📄 Descargar PDF</button></div></article>
 <article class="art-card eco-project-card"><img src="perro.jpg" class="art-img" alt="Perrito Reciclado"><div class="art-info"><h4>Perrito Reciclado</h4><p>Manualidad de perrito con materiales reciclados como cajas, conos de papel y tapas de botellas.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(1)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(1)">📄 Descargar PDF</button></div></article>
 <article class="art-card eco-project-card"><img src="llaveros.jpg" class="art-img" alt="Llaveros con Tapas"><div class="art-info"><h4>Llaveros con Tapas</h4><p>Perforar una tapa plástica, decorarla con caras de fomi o pintura y colocarle argolla.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(2)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(2)">📄 Descargar PDF</button></div></article>
 <article class="art-card eco-project-card"><img src="alcancia.jpg" class="art-img" alt="Alcancías Chanchito"><div class="art-info"><h4>Alcancías Chanchito</h4><p>Hacer una ranura en la botella plástica, colocar patas de tapas y orejas de fomi.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(3)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(3)">📄 Descargar PDF</button></div></article>
 <article class="art-card eco-project-card"><img src="tres_en_raya.jpg" class="art-img" alt="Tres en Raya"><div class="art-info"><h4>Tres en Raya</h4><p>Tablero cuadrado de cartón con cuadrícula pintada y fichas hechas de tapas con X y O.</p></div><div class="eco-card-actions"><button class="eco-view" onclick="showEcoDetail(4)">👁 Ver / Materiales</button><button class="eco-pdf" onclick="downloadEcoGuide(4)">📄 Descargar PDF</button></div></article></div>
-    </div></section>
+    </div><div id="ecoTeacherReview" hidden class="eco-work-panel"><h3>📋 Registros por revisar</h3><div id="ecoReviewList"></div></div><div id="ecoStudentRecords" hidden class="eco-work-panel"><h3>🧾 Mis manualidades realizadas</h3><div id="ecoMyRecords"></div></div></section>
     <!-- 5. GALERÍA -->
     <section id="tab-galeria" class="section-tab">
       <div class="colored-section-galeria">
@@ -535,7 +546,7 @@
             <p style="color: #1565c0; font-size: 0.9rem;">Campaña Actual: Octubre 2026</p>
           </div>
           <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="btn btn-orange" onclick="triggerFileUpload()">📷 Subir mi foto</button>
+            
             <button class="btn btn-white" style="border: 2px solid #3498db; color: #3498db;" onclick="openModal('Campañas Anteriores', 'Mostrando archivo de fotos de los meses pasados.')">🗓️ Ver Anteriores</button>
           </div>
         </div>
@@ -626,16 +637,30 @@
   <!-- ECOARTE: DETALLE Y REGISTRO -->
   <div id="ecoDetailOverlay" class="eco-overlay" role="dialog" aria-modal="true" aria-label="Detalle de manualidad" hidden>
     <div class="eco-dialog"><div class="eco-dialog-head"><button class="eco-back" onclick="closeEcoDetail()" aria-label="Volver">←</button><h2 id="ecoDetailTitle"></h2><button class="eco-close" onclick="closeEcoDetail()" aria-label="Cerrar">×</button></div>
-      <div class="eco-detail-body"><div class="eco-detail-left"><div class="eco-image-wrap"><img id="ecoDetailImage" alt="Manualidad"><span>🌱 Manualidad ecológica</span></div><h3>Procedimiento</h3><ol id="ecoSteps"></ol></div><div class="eco-materials"><h3>📋 Materiales necesarios</h3><ul id="ecoMaterialList"></ul><div class="eco-mascot">🐧 <small>¡Y listo! Ya tienes tu maceta ecológica.</small></div></div></div>
-      <div class="eco-dialog-actions"><button class="eco-view" onclick="openEcoPreview()">👁 Ver manualidad</button><button class="eco-blue" onclick="downloadEcoGuide()">📄 Descargar guía / Molde PDF</button><button class="eco-green" onclick="showEcoRegister()">☑ Registrar manualidad realizada</button></div>
+      <div class="eco-detail-body"><div class="eco-detail-left"><div class="eco-image-wrap"><img id="ecoDetailImage" alt="Manualidad"><span>🌱 Manualidad ecológica</span></div><h3>Procedimiento</h3><ol id="ecoSteps"></ol></div><div class="eco-materials"><h3>📋 Materiales necesarios</h3><ul id="ecoMaterialList"></ul><div class="eco-mascot">🎨 <small id="ecoDetailFinish">¡Tu creación ecológica está lista!</small></div></div></div>
+      <div class="eco-dialog-actions"><button class="eco-view" onclick="openEcoPreview()">👁 Ver manualidad</button><button class="eco-blue" onclick="downloadEcoGuide()">📄 Descargar guía / Molde PDF</button><button id="ecoRegisterBtn" class="eco-green" onclick="showEcoRegister()">☑ Registrar manualidad realizada</button></div>
     </div>
   </div>
   <div id="ecoRegisterOverlay" class="eco-overlay" role="dialog" aria-modal="true" aria-label="Registrar manualidad" hidden>
     <div class="eco-register-dialog"><div class="eco-register-head">☑ Registrar manualidad realizada <button onclick="closeEcoRegister()" aria-label="Cerrar">×</button></div><form id="ecoRegisterForm" onsubmit="saveEcoRegister(event)">
       <div class="eco-product-row"><img id="ecoRegisterImage" alt="Manualidad"><div><strong id="ecoRegisterName"></strong></div><div class="eco-quantity"><label for="ecoProductQuantity">Cantidad de productos elaborados</label><div><button type="button" onclick="changeEcoProduct(-1)">−</button><input id="ecoProductQuantity" type="number" min="1" max="99999" value="1" required><button type="button" onclick="changeEcoProduct(1)">+</button></div></div></div>
       <h4>Materiales utilizados</h4><div class="eco-table-wrap"><table class="eco-table"><thead><tr><th>Material</th><th>Cantidad utilizada</th></tr></thead><tbody id="ecoRegisterMaterials"></tbody></table></div>
-      <p class="eco-help">*Registra solo los materiales que realmente se utilizaron en la manualidad.</p><div class="eco-register-actions"><button type="button" class="eco-cancel" onclick="closeEcoRegister()">✕ Cancelar</button><button type="submit" class="eco-green">💾 Guardar registro</button></div>
+      <p class="eco-help">*Registra solo los materiales que realmente se utilizaron en la manualidad.</p><div class="eco-register-actions"><button type="button" class="eco-cancel" onclick="closeEcoRegister()">✕ Cancelar</button><button type="submit" class="eco-green">📨 Enviar a revisión</button></div>
     </form></div>
+  </div>
+
+
+  <!-- ECOARTE: FORMULARIO DEL DOCENTE -->
+  <div id="ecoCreateOverlay" class="eco-overlay" role="dialog" aria-modal="true" aria-label="Publicar manualidad" hidden>
+    <div class="eco-register-dialog"><div class="eco-register-head">🎨 Publicar nueva manualidad <button type="button" onclick="closeEcoCreate()">×</button></div>
+      <form id="ecoCreateForm"><label>Nombre de la manualidad<input name="nombre" required maxlength="100" placeholder="Ej. Robot de cartón"></label>
+      <label>Descripción<textarea name="descripcion" required maxlength="600" rows="2"></textarea></label>
+      <label>Fotografía de la manualidad (obligatoria)<input name="foto" type="file" accept="image/jpeg,image/png,image/webp" required></label>
+      <label>Materiales necesarios <small>(uno por línea: material | cantidad | emoji)</small><textarea name="materiales" rows="4" required placeholder="Botellas de plástico | 2 | 🧴&#10;Tapas de botellas | 4 | 🔘"></textarea></label>
+      <label>Procedimiento <small>(un paso por línea)</small><textarea name="pasos" rows="5" required placeholder="Lava los materiales.&#10;Arma la figura.&#10;Decora."></textarea></label>
+      <label>Enlace de guía PDF (opcional, HTTPS)<input name="pdf" type="url" placeholder="https://..."></label>
+      <p id="ecoCreateStatus" class="eco-help"></p>
+      <div class="eco-register-actions"><button type="button" class="eco-cancel" onclick="closeEcoCreate()">Cancelar</button><button type="submit" class="eco-green">📤 Publicar manualidad</button></div></form></div>
   </div>
 
   <!-- MODAL GENERAL -->
@@ -794,46 +819,6 @@
 
     function saveWeekData() { window.ecoRetoSave?.(); }
 
-    /* SUBIDA DE FOTOS */
-    function triggerFileUpload() {
-      document.getElementById('fileInput').click();
-    }
-
-    function handleFileUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const imgUrl = e.target.result;
-          
-          const ecoArteGallery = document.getElementById('ecoArteGallery');
-          const newArtCard = document.createElement('div');
-          newArtCard.className = 'art-card';
-          newArtCard.innerHTML = `
-            <img src="${imgUrl}" class="art-img" alt="Manualidad subida">
-            <div class="art-info">
-              <h4>¡Nueva Manualidad Subida!</h4>
-              <p style="font-size: 0.8rem; color: #666;">Subido recientemente por el alumno.</p>
-            </div>
-            <button class="btn-dl-item" onclick="openModal('Guía Personalizada', 'Manualidad creada por el estudiante.')">📄 Descargar Guía</button>
-          `;
-          ecoArteGallery.prepend(newArtCard);
-
-          const mainGallery = document.getElementById('mainPublicGallery');
-          const newGalleryCard = document.createElement('div');
-          newGalleryCard.className = 'art-card';
-          newGalleryCard.innerHTML = `
-            <img src="${imgUrl}" class="art-img" alt="Manualidad subida">
-            <div class="art-info"><strong>Nuevo</strong> Proyecto Reciente</div>
-          `;
-          mainGallery.prepend(newGalleryCard);
-
-          openModal('🎉 ¡Foto publicada con éxito!', 'Tu imagen ha sido subida y publicada automáticamente tanto en la Galería como en EcoArte.');
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
     /* LOGROS DINÁMICOS */
     function updateLogroVal(elemId, change) {
       const elem = document.getElementById(elemId);
@@ -877,18 +862,8 @@
     /* EcoArte: datos y registro local. Firebase se integrará en una etapa posterior. */
     const ecoProjects = [{"name": "Macetas Pingüino", "image": "masetero.jpg", "description": "Cortar la base de la botella plástica, pintar el cuerpo blanco y negro, y colocar una plantita.", "pdf": "Macetas_Pinguino_Moldes.pdf", "materials": [["Botellas de plástico", "🧴", 1], ["Pintura", "🎨", 1], ["Cartón / goma eva", "📦", 1]], "steps": ["Lava y seca la botella.", "Pinta la botella del color que prefieras.", "Decora con los detalles del pingüino (ojos, pico, alas y patas).", "Coloca una planta pequeña en la parte superior."]}, {"name": "Perrito Reciclado", "image": "perro.jpg", "description": "Manualidad de perrito con materiales reciclados como cajas, conos de papel y tapas de botellas.", "pdf": "Perrito_Reciclado_Moldes.pdf", "materials": [["Cajas de cartón", "📦", 1], ["Conos de papel", "🧻", 2], ["Tapas de botellas", "🔘", 4]], "steps": ["Forma el cuerpo con una caja de cartón.", "Agrega las patas con conos de papel.", "Recorta y pega las orejas y la cola.", "Decora con tapas y pintura."]}, {"name": "Llaveros con Tapas", "image": "llaveros.jpg", "description": "Perforar una tapa plástica, decorarla con caras de fomi o pintura y colocarle argolla.", "pdf": "Llaveros_Tapas_Guia.pdf", "materials": [["Tapas de botellas", "🔘", 1], ["Cartón / goma eva", "📦", 1], ["Argollas", "🗝️", 1]], "steps": ["Limpia las tapas de botellas.", "Perfora con ayuda de un adulto.", "Decora las tapas con pintura o goma eva.", "Coloca la argolla de llavero."]}, {"name": "Alcancías Chanchito", "image": "alcancia.jpg", "description": "Hacer una ranura en la botella plástica, colocar patas de tapas y orejas de fomi.", "pdf": "Alcancia_Chanchito_Moldes.pdf", "materials": [["Botellas de plástico", "🧴", 1], ["Tapas de botellas", "🔘", 4], ["Cartón / goma eva", "📦", 1]], "steps": ["Limpia la botella y marca la ranura.", "Pide ayuda a un adulto para realizar el corte.", "Pega cuatro tapas como patas.", "Añade orejas, ojos y decoración."]}, {"name": "Tres en Raya", "image": "tres_en_raya.jpg", "description": "Tablero cuadrado de cartón con cuadrícula pintada y fichas hechas de tapas con X y O.", "pdf": "Tres_En_Raya_Guia.pdf", "materials": [["Cajas de cartón", "📦", 1], ["Tapas de botellas", "🔘", 10], ["Pintura", "🎨", 1]], "steps": ["Recorta un tablero de cartón.", "Dibuja la cuadrícula de 3 × 3.", "Pinta cinco tapas con X y cinco con O.", "¡Ya puedes jugar!"]}];
     let ecoCurrentProject = 0;
-    const ecoStorageKey = 'ecoreto_ecoarte_registros_v1';
-    function ecoRecords(){try{const a=JSON.parse(localStorage.getItem(ecoStorageKey)||'[]');return Array.isArray(a)?a:[]}catch{return []}}
-    function showEcoDetail(i){ecoCurrentProject=i;const p=ecoProjects[i];document.getElementById('ecoDetailTitle').textContent='🐧 '+p.name;document.getElementById('ecoDetailImage').src=p.image;document.getElementById('ecoDetailImage').alt=p.name;document.getElementById('ecoSteps').replaceChildren(...p.steps.map(x=>{const li=document.createElement('li');li.textContent=x;return li}));document.getElementById('ecoMaterialList').replaceChildren(...p.materials.map(m=>{const li=document.createElement('li');li.textContent=m[1]+'  '+m[0];return li}));document.getElementById('ecoDetailOverlay').hidden=false;document.body.style.overflow='hidden'}
-    function closeEcoDetail(){document.getElementById('ecoDetailOverlay').hidden=true;document.body.style.overflow=''}
-    function showEcoRegister(){if(!window.ecoIsTeacher?.()){alert('Solo el docente puede registrar manualidades.');return;} const p=ecoProjects[ecoCurrentProject];document.getElementById('ecoRegisterImage').src=p.image;document.getElementById('ecoRegisterName').textContent=p.name;document.getElementById('ecoProductQuantity').value=1;document.getElementById('ecoRegisterMaterials').replaceChildren(...p.materials.map((m,i)=>{const tr=document.createElement('tr'),td=document.createElement('td'),q=document.createElement('td'),input=document.createElement('input');td.textContent=m[1]+' '+m[0];input.type='number';input.min='0';input.max='999999';input.step='1';input.value=m[2];input.dataset.material=m[0];input.required=true;input.setAttribute('aria-label','Cantidad utilizada de '+m[0]);q.appendChild(input);tr.append(td,q);return tr}));document.getElementById('ecoDetailOverlay').hidden=true;document.getElementById('ecoRegisterOverlay').hidden=false}
-    function closeEcoRegister(){document.getElementById('ecoRegisterOverlay').hidden=true;document.getElementById('ecoDetailOverlay').hidden=false}
-    function changeEcoProduct(delta){const input=document.getElementById('ecoProductQuantity');input.value=Math.max(1,Math.min(99999,(parseInt(input.value)||1)+delta))}
-    function saveEcoRegister(event){event.preventDefault();if(!window.ecoIsTeacher?.()){alert('Solo el docente puede registrar manualidades.');return;}const count=Number(document.getElementById('ecoProductQuantity').value);if(!Number.isSafeInteger(count)||count<1||count>99999){alert('Ingresa una cantidad válida de productos.');return}const materials=Array.from(document.querySelectorAll('#ecoRegisterMaterials input')).map(input=>({nombre:input.dataset.material,cantidad:Number(input.value)}));if(materials.some(m=>!Number.isSafeInteger(m.cantidad)||m.cantidad<0||m.cantidad>999999)){alert('Ingresa cantidades válidas de materiales.');return}if(materials.every(m=>m.cantidad===0)){alert('Registra al menos un material utilizado.');return}const records=ecoRecords();records.push({proyecto:ecoProjects[ecoCurrentProject].name,productos:count,materiales:materials,fecha:new Date().toISOString()});try{localStorage.setItem(ecoStorageKey,JSON.stringify(records))}catch(e){alert('No se pudo guardar en este navegador. Verifica el almacenamiento disponible.');return}document.getElementById('ecoRegisterOverlay').hidden=true;document.body.style.overflow='';updateEcoLogros();openModal('✅ Registro guardado','Se registraron '+count+' productos de '+ecoProjects[ecoCurrentProject].name+'. Los materiales utilizados ya se reflejan en Mis Logros (guardado local de este navegador).')}
-    function updateEcoLogros(){const records=ecoRecords();if(!records.length)return;const reused=records.reduce((sum,r)=>sum+(r.materiales||[]).reduce((a,m)=>a+(Number(m.cantidad)||0),0),0);const elem=document.getElementById('logroReutilizados');if(elem)elem.textContent=reused;const collected=Number(document.getElementById('logroRecolectados')?.textContent)||0;const pending=document.getElementById('logroReducidos');if(pending)pending.textContent=Math.max(0,collected-reused)}
-    function openEcoPreview(){openModal('🎨 '+ecoProjects[ecoCurrentProject].name,ecoProjects[ecoCurrentProject].description+'\n\n'+ecoProjects[ecoCurrentProject].steps.map((s,i)=>(i+1)+'. '+s).join('\n'))}
-    function downloadEcoGuide(index){const p=ecoProjects[index===undefined?ecoCurrentProject:index];const content=p.name+'\n\nMATERIALES\n'+p.materials.map(m=>'- '+m[0]).join('\n')+'\n\nPROCEDIMIENTO\n'+p.steps.map((x,i)=>(i+1)+'. '+x).join('\n');downloadPdf(p.pdf,content)}
-    window.addEventListener('DOMContentLoaded',updateEcoLogros);
+    // EcoArte Firebase: las funciones se conectan desde firebase-ecoarte.js.
+    // Las cinco plantillas originales se conservan en ecoProjects.
 
   </script>
   <script>
@@ -924,5 +899,6 @@
   </script>
   <script type="module" src="./firebase-auth.js"></script>
   <script type="module" src="./firebase-reto.js"></script>
+  <script type="module" src="./firebase-ecoarte.js"></script>
 </body>
 </html>

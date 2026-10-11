@@ -57,6 +57,51 @@ service cloud.firestore {
     && request.resource.data.dia == resource.data.dia;
    allow delete: if false;
   }
+  // EcoArte: solo docentes publican plantillas; alumnos registran sus realizaciones.
+  match /manualidades/{id} {
+    function validProject() {
+      return request.resource.data.keys().hasOnly(['name','description','image','materials','steps','pdf','creadoPor','creadoEn'])
+        && request.resource.data.keys().hasAll(['name','description','image','materials','steps','pdf','creadoPor','creadoEn'])
+        && request.resource.data.name is string && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
+        && request.resource.data.description is string && request.resource.data.description.size() > 0 && request.resource.data.description.size() <= 600
+        && request.resource.data.image is string && request.resource.data.image.matches('^https://res.cloudinary.com/hohksfnm/image/upload/.*')
+        && request.resource.data.materials is list && request.resource.data.materials.size() > 0 && request.resource.data.materials.size() <= 20
+        && request.resource.data.steps is list && request.resource.data.steps.size() > 0 && request.resource.data.steps.size() <= 20
+        && request.resource.data.pdf is string && request.resource.data.pdf.size() <= 500
+        && request.resource.data.creadoPor == request.auth.uid && request.resource.data.creadoEn == request.time;
+    }
+    allow read: if true;
+    allow create: if teacher() && validProject();
+    allow update, delete: if false;
+  }
+  match /manualidades_realizadas/{id} {
+    function isStudent() {
+      return verified() && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'alumno';
+    }
+    function validRecord() {
+      return request.resource.data.keys().hasOnly(['alumnoId','proyectoId','proyectoNombre','productos','materiales','estado','observacion','creadoEn','actualizadoEn'])
+        && request.resource.data.keys().hasAll(['alumnoId','proyectoId','proyectoNombre','productos','materiales','estado','observacion','creadoEn','actualizadoEn'])
+        && request.resource.data.alumnoId == request.auth.uid
+        && request.resource.data.proyectoId is string
+        && (request.resource.data.proyectoId.matches('^base_[0-4]$') || exists(/databases/$(database)/documents/manualidades/$(request.resource.data.proyectoId)))
+        && request.resource.data.proyectoNombre is string && request.resource.data.proyectoNombre.size() > 0 && request.resource.data.proyectoNombre.size() <= 100
+        && request.resource.data.productos is int && request.resource.data.productos > 0 && request.resource.data.productos <= 1000
+        && request.resource.data.materiales is list && request.resource.data.materiales.size() > 0 && request.resource.data.materiales.size() <= 20
+        && request.resource.data.estado == 'pendiente' && request.resource.data.observacion == ''
+        && request.resource.data.creadoEn == request.time && request.resource.data.actualizadoEn == request.time;
+    }
+    allow get, list: if verified() && (teacher() || resource.data.alumnoId == request.auth.uid);
+    allow create: if isStudent() && validRecord();
+    allow update: if teacher() && resource.data.estado == 'pendiente'
+      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['estado','observacion','revisadoPor','revisadoEn','actualizadoEn'])
+      && request.resource.data.estado in ['aprobado','observado']
+      && request.resource.data.observacion is string && request.resource.data.observacion.size() <= 500
+      && (request.resource.data.estado == 'aprobado' || request.resource.data.observacion.size() > 0)
+      && request.resource.data.revisadoPor == request.auth.uid
+      && request.resource.data.revisadoEn == request.time && request.resource.data.actualizadoEn == request.time;
+    allow delete: if false;
+  }
   match /{document=**} { allow read, write: if false; }
  }
 }
