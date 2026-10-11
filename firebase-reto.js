@@ -1,28 +1,22 @@
 
 import {
-  initializeApp,
-  getApps,
-  getApp
+  initializeApp, getApps, getApp
 } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 
 import {
-  getAuth,
-  onAuthStateChanged
+  getAuth, onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 
 import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  getDoc,
-  doc,
-  setDoc,
-  serverTimestamp
+  getFirestore, collection, query, where,
+  getDocs, getDoc, doc, setDoc, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
 
 import { firebaseConfig } from './firebase-config.js';
+
+// ==========================================
+// CONFIGURACION FIREBASE
+// ==========================================
 
 const app = getApps().length
   ? getApp()
@@ -30,15 +24,10 @@ const app = getApps().length
 
 const auth = getAuth(app);
 const db = getFirestore(app);
-
 const $ = id => document.getElementById(id);
 
 const fields = [
-  'plastico',
-  'papel',
-  'carton',
-  'metal',
-  'otros'
+  'plastico', 'papel', 'carton', 'metal', 'otros'
 ];
 
 let teacher = false;
@@ -59,7 +48,6 @@ const localISO = d =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
 const today = () => localISO(new Date());
-
 const monthOf = d => d.slice(0, 7);
 
 const weekOf = d =>
@@ -72,18 +60,10 @@ const dateForWeek = (m, w) =>
   `${m}-${String((w - 1) * 7 + 1).padStart(2, '0')}`;
 
 const months = {
-  Enero: 1,
-  Febrero: 2,
-  Marzo: 3,
-  Abril: 4,
-  Mayo: 5,
-  Junio: 6,
-  Julio: 7,
-  Agosto: 8,
-  Septiembre: 9,
-  Octubre: 10,
-  Noviembre: 11,
-  Diciembre: 12
+  Enero: 1, Febrero: 2, Marzo: 3,
+  Abril: 4, Mayo: 5, Junio: 6,
+  Julio: 7, Agosto: 8, Septiembre: 9,
+  Octubre: 10, Noviembre: 11, Diciembre: 12
 };
 
 // ==========================================
@@ -92,30 +72,33 @@ const months = {
 
 function status(message) {
   const element = $('retoStatus');
-
-  if (element) {
-    element.textContent = message;
-  }
+  if (element) element.textContent = message;
 }
 
 function counts() {
   return fields.map((_, i) => {
     const element = $('c' + (i + 1));
-
-    return element
-      ? Number(element.textContent) || 0
-      : 0;
+    return element ? Number(element.textContent) || 0 : 0;
   });
 }
 
 function setCounts(values) {
   fields.forEach((_, i) => {
     const element = $('c' + (i + 1));
-
     if (element) {
       element.textContent = String(values?.[i] ?? 0);
     }
   });
+}
+
+function clearForm() {
+  setCounts([0, 0, 0, 0, 0]);
+
+  const notes = document.querySelector(
+    '#tab-ecoreto textarea'
+  );
+
+  if (notes) notes.value = '';
 }
 
 function canEdit() {
@@ -137,26 +120,22 @@ window.ecoRetoCanEdit = canEdit;
 
 function render(preserveValues = false) {
   const allowed = canEdit();
-
   const saveButton = $('retoSave');
 
   if (saveButton) {
     saveButton.hidden = !allowed && !busy;
     saveButton.disabled = busy;
-
-    if (busy) {
-      saveButton.textContent = '⏳ Guardando...';
-    } else {
-      saveButton.textContent = '💾 Guardar recolección';
-    }
+    saveButton.textContent = busy
+      ? '⏳ Guardando...'
+      : '💾 Guardar recolección';
   }
 
-  document
-    .querySelectorAll('#tab-ecoreto .btn-circle')
-    .forEach(button => {
-      button.disabled = !allowed;
-      button.style.opacity = allowed ? '1' : '.4';
-    });
+  document.querySelectorAll(
+    '#tab-ecoreto .btn-circle'
+  ).forEach(button => {
+    button.disabled = !allowed;
+    button.style.opacity = allowed ? '1' : '.4';
+  });
 
   if ($('retoStudentLabel')) {
     $('retoStudentLabel').hidden = !teacher;
@@ -167,10 +146,7 @@ function render(preserveValues = false) {
   }
 
   const selectedDate = $('retoDate')?.value;
-
-  const item = rows.find(
-    r => r.fecha === selectedDate
-  );
+  const item = rows.find(r => r.fecha === selectedDate);
 
   const notes = document.querySelector(
     '#tab-ecoreto textarea'
@@ -188,18 +164,13 @@ function render(preserveValues = false) {
     }
   }
 
-  if (notes) {
-    notes.disabled = !allowed;
-  }
+  if (notes) notes.disabled = !allowed;
 
-  document
-    .querySelectorAll('#tab-ecoreto .week-btn')
-    .forEach((button, i) => {
-      button.classList.toggle(
-        'active',
-        i + 1 === week
-      );
-    });
+  document.querySelectorAll(
+    '#tab-ecoreto .week-btn'
+  ).forEach((button, i) => {
+    button.classList.toggle('active', i + 1 === week);
+  });
 
   const weekRows = rows.filter(
     r => weekOf(r.fecha) === week
@@ -212,10 +183,7 @@ function render(preserveValues = false) {
     )
   );
 
-  const sum = totals.reduce(
-    (a, b) => a + b,
-    0
-  );
+  const sum = totals.reduce((a, b) => a + b, 0);
 
   if (statusOverride) {
     status(statusOverride);
@@ -230,9 +198,7 @@ function render(preserveValues = false) {
   }
 
   if (!student) {
-    status(
-      'Selecciona un estudiante para continuar.'
-    );
+    status('Selecciona un estudiante para continuar.');
     return;
   }
 
@@ -249,11 +215,9 @@ function render(preserveValues = false) {
 
 async function updateLogros() {
   const selector = $('logrosMonthSelect');
-
   if (!selector) return;
 
   const value = selector.value;
-
   if (!value) return;
 
   const [name, year] = value.split(' ');
@@ -262,9 +226,7 @@ async function updateLogros() {
     `${year}-${String(months[name] || 1).padStart(2, '0')}`;
 
   function setText(id, value) {
-    if ($(id)) {
-      $(id).textContent = String(value);
-    }
+    if ($(id)) $(id).textContent = String(value);
   }
 
   function clearLogros() {
@@ -297,17 +259,14 @@ async function updateLogros() {
 
     if (requestedStudent !== student) return;
 
-    const total = snap.docs.reduce(
-      (sum, document) => {
-        const data = document.data();
+    const total = snap.docs.reduce((sum, document) => {
+      const data = document.data();
 
-        return sum + fields.reduce(
-          (n, k) => n + (Number(data[k]) || 0),
-          0
-        );
-      },
-      0
-    );
+      return sum + fields.reduce(
+        (n, k) => n + (Number(data[k]) || 0),
+        0
+      );
+    }, 0);
 
     const reused = 0;
 
@@ -324,8 +283,7 @@ async function updateLogros() {
     setText('logroMetaPct', percentage + '%');
 
     if ($('logroMetaBar')) {
-      $('logroMetaBar').style.width =
-        percentage + '%';
+      $('logroMetaBar').style.width = percentage + '%';
     }
 
     if ($('logrosSource')) {
@@ -340,10 +298,7 @@ async function updateLogros() {
     }
 
   } catch (error) {
-    console.error(
-      'Error cargando logros:',
-      error
-    );
+    console.error('Error cargando logros:', error);
 
     if ($('logrosSource')) {
       $('logrosSource').textContent =
@@ -380,14 +335,15 @@ async function load() {
       )
     );
 
-    if (version !== loadVersion) return;
+    if (
+      version !== loadVersion ||
+      requestedStudent !== student ||
+      requestedMonth !== month
+    ) return;
 
-    rows = snap.docs.map(
-      document => document.data()
-    );
+    rows = snap.docs.map(document => document.data());
 
     render();
-
     await updateLogros();
 
   } catch (error) {
@@ -425,7 +381,6 @@ function updateDate() {
     ).padStart(2, '0')}`;
 
   const dateInput = $('retoDate');
-
   if (!dateInput) return;
 
   dateInput.min = start;
@@ -439,7 +394,6 @@ function updateDate() {
       : start;
 
   statusOverride = '';
-
   render();
 }
 
@@ -452,70 +406,55 @@ window.ecoRetoSelectWeek = w => {
     !Number.isInteger(selected) ||
     selected < 1 ||
     selected > 4
-  ) {
-    return;
-  }
+  ) return;
 
   week = selected;
-
   updateDate();
 };
 
 if ($('retoDate')) {
-  $('retoDate').addEventListener(
-    'change',
-    () => {
-      const value = $('retoDate').value;
+  $('retoDate').addEventListener('change', () => {
+    if (busy) return;
 
-      if (
-        monthOf(value) !== month ||
-        weekOf(value) !== week
-      ) {
-        updateDate();
-        return;
-      }
+    const value = $('retoDate').value;
 
-      statusOverride = '';
-      render();
+    if (
+      monthOf(value) !== month ||
+      weekOf(value) !== week
+    ) {
+      updateDate();
+      return;
     }
-  );
+
+    statusOverride = '';
+    render();
+  });
 }
 
 if ($('retoMonth')) {
-  $('retoMonth').addEventListener(
-    'change',
-    async () => {
-      if (busy) return;
+  $('retoMonth').addEventListener('change', async () => {
+    if (busy) return;
 
-      month =
-        $('retoMonth').value ||
-        monthOf(today());
+    month = $('retoMonth').value || monthOf(today());
 
-      week =
-        month === monthOf(today())
-          ? weekOf(today())
-          : 1;
+    week = month === monthOf(today())
+      ? weekOf(today())
+      : 1;
 
-      updateDate();
-
-      await load();
-    }
-  );
+    updateDate();
+    await load();
+  });
 }
 
 if ($('retoStudent')) {
-  $('retoStudent').addEventListener(
-    'change',
-    async () => {
-      if (busy) return;
+  $('retoStudent').addEventListener('change', async () => {
+    if (busy) return;
 
-      student = $('retoStudent').value;
+    student = $('retoStudent').value;
+    statusOverride = '';
 
-      statusOverride = '';
-
-      await load();
-    }
-  );
+    await load();
+  });
 }
 
 // ==========================================
@@ -524,16 +463,12 @@ if ($('retoStudent')) {
 
 async function loadStudents() {
   const selector = $('retoStudent');
-
   if (!selector) return;
 
   selector.replaceChildren();
 
   selector.add(
-    new Option(
-      'Selecciona un estudiante',
-      ''
-    )
+    new Option('Selecciona un estudiante', '')
   );
 
   try {
@@ -550,9 +485,7 @@ async function loadStudents() {
         ...document.data()
       }))
       .sort((a, b) =>
-        (a.nombre || '').localeCompare(
-          b.nombre || ''
-        )
+        (a.nombre || '').localeCompare(b.nombre || '')
       );
 
     students.forEach(s => {
@@ -565,9 +498,7 @@ async function loadStudents() {
     });
 
     if (!students.length) {
-      status(
-        'Aún no hay alumnos registrados.'
-      );
+      status('Aún no hay alumnos registrados.');
     }
 
   } catch (error) {
@@ -585,7 +516,7 @@ async function loadStudents() {
 }
 
 // ==========================================
-// GUARDAR RECOLECCIÓN EN FIRESTORE
+// GUARDAR RECOLECCION EN FIRESTORE
 // ==========================================
 
 window.ecoRetoSave = async () => {
@@ -597,11 +528,9 @@ window.ecoRetoSave = async () => {
   }
 
   const fecha = $('retoDate').value;
-
   const selectedStudent = student;
   const selectedMonth = month;
   const selectedWeek = week;
-
   const user = auth.currentUser;
 
   if (!user) {
@@ -614,32 +543,27 @@ window.ecoRetoSave = async () => {
     weekOf(fecha) !== selectedWeek ||
     fecha > today()
   ) {
-    status(
-      '❌ Selecciona una fecha válida de la semana actual.'
-    );
+    status('❌ Selecciona una fecha válida de la semana actual.');
     return;
   }
 
+  // Capturar cantidades ANTES de guardar.
   const cantidades = counts();
 
   if (
     cantidades.some(
-      n =>
-        !Number.isSafeInteger(n) ||
-        n < 0 ||
-        n > 10000
+      n => !Number.isSafeInteger(n) || n < 0 || n > 10000
     )
   ) {
-    status(
-      '❌ Las cantidades deben estar entre 0 y 10 000.'
-    );
+    status('❌ Las cantidades deben estar entre 0 y 10 000.');
     return;
   }
 
-  const observaciones =
-    document
-      .querySelector('#tab-ecoreto textarea')
-      ?.value.trim() || '';
+  const notesInput = document.querySelector(
+    '#tab-ecoreto textarea'
+  );
+
+  const observaciones = notesInput?.value.trim() || '';
 
   if (observaciones.length > 500) {
     status(
@@ -648,11 +572,7 @@ window.ecoRetoSave = async () => {
     return;
   }
 
-  // Capturamos todos los datos ANTES de
-  // deshabilitar el formulario.
-
-  const documentId =
-    `${selectedStudent}_${fecha}`;
+  const documentId = `${selectedStudent}_${fecha}`;
 
   const data = {
     alumnoId: selectedStudent,
@@ -677,51 +597,50 @@ window.ecoRetoSave = async () => {
   statusOverride =
     '⏳ Guardando recolección en Firebase...';
 
-  // Mantener los contadores visibles
-  // durante el guardado.
+  // Conservar valores mientras Firebase responde.
   render(true);
 
   let saved = false;
 
   try {
     console.log(
-      'ECORETO - Documento:',
-      documentId
-    );
-
-    console.log(
-      'ECORETO - Datos enviados:',
+      'ECORETO - Guardando documento:',
+      documentId,
       data
     );
 
     await setDoc(
-      doc(
-        db,
-        'recolecciones',
-        documentId
-      ),
+      doc(db, 'recolecciones', documentId),
       data
     );
 
     saved = true;
 
     console.log(
-      'ECORETO - Guardado confirmado'
+      'ECORETO - Guardado confirmado:',
+      documentId
     );
 
-    // Actualizamos los datos locales
-    // sin depender de otra consulta.
-    rows = rows.filter(
-      r => r.fecha !== fecha
-    );
+    // Actualizar registros locales.
+    rows = rows.filter(r => r.fecha !== fecha);
 
     rows.push({
       ...data,
       actualizadoEn: new Date()
     });
 
+    // ======================================
+    // LIMPIAR FORMULARIO DESPUES DE GUARDAR
+    // ======================================
+
+    clearForm();
+
+    // Se mantienen alumno, fecha, mes y semana.
+    // Firestore conserva los valores originales.
+
     statusOverride =
-      '✅ Recolección guardada correctamente en Firebase.';
+      '✅ Recolección guardada correctamente. ' +
+      'Las cantidades se restablecieron a 0.';
 
   } catch (error) {
     console.error(
@@ -736,13 +655,14 @@ window.ecoRetoSave = async () => {
   } finally {
     busy = false;
 
-    // No borrar las cantidades cuando
-    // ocurre un error.
-    render(!saved);
+    // No recuperar las cantidades de rows
+    // inmediatamente despues de guardar.
+    // Si falla, tampoco se borran los valores.
+    render(true);
   }
 
-  // Los logros se actualizan después
-  // del guardado confirmado.
+  // Actualizar Mis Logros sin limpiar los
+  // registros guardados en Firestore.
   if (saved) {
     try {
       await updateLogros();
@@ -754,91 +674,83 @@ window.ecoRetoSave = async () => {
     }
 
     statusOverride =
-      '✅ Recolección guardada correctamente en Firebase.';
+      '✅ Recolección guardada correctamente. ' +
+      'Las cantidades se restablecieron a 0.';
 
     status(statusOverride);
   }
 };
 
 // ==========================================
-// AUTENTICACIÓN Y CARGA INICIAL
+// AUTENTICACION Y CARGA INICIAL
 // ==========================================
 
-onAuthStateChanged(
-  auth,
-  async user => {
-    ++loadVersion;
+onAuthStateChanged(auth, async user => {
+  ++loadVersion;
 
-    ready = false;
-    teacher = false;
-    student = '';
-    rows = [];
-    busy = false;
-    statusOverride = '';
+  ready = false;
+  teacher = false;
+  student = '';
+  rows = [];
+  busy = false;
+  statusOverride = '';
 
-    if (user) {
-      try {
-        await user.reload();
+  if (user) {
+    try {
+      await user.reload();
 
-        if (user.emailVerified) {
-          const profile = await getDoc(
-            doc(
-              db,
-              'usuarios',
-              user.uid
-            )
-          );
-
-          if (profile.exists()) {
-            const profileData =
-              profile.data();
-
-            teacher =
-              profileData.rol === 'docente';
-
-            ready = true;
-
-            if (teacher) {
-              await loadStudents();
-            } else {
-              student = user.uid;
-            }
-          } else {
-            statusOverride =
-              '❌ No se encontró tu perfil de usuario.';
-          }
-        } else {
-          statusOverride =
-            '⚠️ Verifica tu correo electrónico para continuar.';
-        }
-
-      } catch (error) {
-        console.error(
-          'ECORETO - Error de autenticación:',
-          error
+      if (user.emailVerified) {
+        const profile = await getDoc(
+          doc(db, 'usuarios', user.uid)
         );
 
+        if (profile.exists()) {
+          const profileData = profile.data();
+
+          teacher = profileData.rol === 'docente';
+          ready = true;
+
+          if (teacher) {
+            await loadStudents();
+          } else {
+            student = user.uid;
+          }
+
+        } else {
+          statusOverride =
+            '❌ No se encontró tu perfil de usuario.';
+        }
+
+      } else {
         statusOverride =
-          '❌ Error verificando usuario: ' +
-          (error.code || error.message);
+          '⚠️ Verifica tu correo electrónico para continuar.';
       }
+
+    } catch (error) {
+      console.error(
+        'ECORETO - Error de autenticación:',
+        error
+      );
+
+      statusOverride =
+        '❌ Error verificando usuario: ' +
+        (error.code || error.message);
     }
-
-    if (!teacher && $('retoStudent')) {
-      $('retoStudent').replaceChildren();
-    }
-
-    month = monthOf(today());
-
-    if ($('retoMonth')) {
-      $('retoMonth').value = month;
-    }
-
-    week = weekOf(today());
-
-    updateDate();
-
-    await load();
   }
-);
+
+  if (!teacher && $('retoStudent')) {
+    $('retoStudent').replaceChildren();
+  }
+
+  month = monthOf(today());
+
+  if ($('retoMonth')) {
+    $('retoMonth').value = month;
+  }
+
+  week = weekOf(today());
+
+  updateDate();
+  await load();
+});
 
