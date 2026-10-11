@@ -219,7 +219,7 @@ function render(preserveValues = false) {
   // ======================================
 
   if ($('retoDate')) {
-    $('retoDate').disabled = !allowed;
+     $('retoDate').disabled = busy || !ready || !student;
   }
 
   const notes = document.querySelector(
