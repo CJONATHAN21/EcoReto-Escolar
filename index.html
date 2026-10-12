@@ -259,6 +259,7 @@
 .auth-panel button{margin:4px}
 .auth-error{color:#a31b3b;min-height:20px}
 </style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -646,7 +647,7 @@
   <div id="ecoDetailOverlay" class="eco-overlay" role="dialog" aria-modal="true" aria-label="Detalle de manualidad" hidden>
     <div class="eco-dialog"><div class="eco-dialog-head"><button class="eco-back" onclick="closeEcoDetail()" aria-label="Volver">←</button><h2 id="ecoDetailTitle"></h2><button class="eco-close" onclick="closeEcoDetail()" aria-label="Cerrar">×</button></div>
       <div class="eco-detail-body"><div class="eco-detail-left"><div class="eco-image-wrap"><img id="ecoDetailImage" alt="Manualidad"><span>🌱 Manualidad ecológica</span></div><h3>Procedimiento</h3><ol id="ecoSteps"></ol></div><div class="eco-materials"><h3>📋 Materiales necesarios</h3><ul id="ecoMaterialList"></ul><div class="eco-mascot">🎨 <small id="ecoDetailFinish">¡Tu creación ecológica está lista!</small></div></div></div>
-      <div class="eco-dialog-actions"><button id="ecoDetailPdfBtn" class="eco-blue" onclick="downloadEcoGuide()">📄 Descargar guía / Molde PDF</button><button id="ecoRegisterBtn" class="eco-green" onclick="showEcoRegister()">☑ Registrar manualidad realizada</button></div>
+      <div class="eco-dialog-actions"><button id="ecoDetailPdfBtn" class="eco-blue" onclick="downloadEcoGuide()">📄 Descargar guía PDF</button><button id="ecoRegisterBtn" class="eco-green" onclick="showEcoRegister()">☑ Registrar manualidad realizada</button></div>
     </div>
   </div>
   <div id="ecoRegisterOverlay" class="eco-overlay" role="dialog" aria-modal="true" aria-label="Registrar manualidad" hidden>
@@ -666,7 +667,7 @@
       <label>Fotografía de la manualidad (obligatoria)<input name="foto" type="file" accept="image/jpeg,image/png,image/webp" required></label>
       <div class="eco-material-editor"><strong>Materiales necesarios</strong><small> Selecciona ícono, nombre y cantidad</small><div id="ecoMaterialRows"></div><button type="button" class="eco-add-material" onclick="addEcoMaterialRow()">＋ Agregar material</button></div>
       <label>Procedimiento <small>(un paso por línea)</small><textarea name="pasos" rows="5" required placeholder="Lava los materiales.&#10;Arma la figura.&#10;Decora."></textarea></label>
-      <label>Enlace de guía PDF (opcional, HTTPS)<input name="pdf" type="url" placeholder="https://..."></label>
+      <label style="display:none">Enlace de guía PDF (opcional, HTTPS)<input name="pdf" type="url" placeholder="https://..."></label>
       <p id="ecoCreateStatus" class="eco-help"></p>
       <div class="eco-register-actions"><button type="button" class="eco-cancel" onclick="closeEcoCreate()">Cancelar</button><button type="submit" class="eco-green">📤 Publicar manualidad</button></div></form></div>
   </div>

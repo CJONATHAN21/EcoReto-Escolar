@@ -38,10 +38,8 @@ function renderProjects(){
   const actions=make('div','eco-card-actions');
   const view=make('button','eco-view','👁 Ver / Materiales');view.onclick=()=>window.showEcoDetail(i);
   actions.append(view);
-  if(p.pdf?.startsWith('https://')) {
-   const pdf=make('button','eco-pdf','📄 Descargar PDF');
-   pdf.onclick=()=>window.downloadEcoGuide(i);actions.append(pdf);
-  }
+  const pdf=make('button','eco-pdf','📄 Descargar guía PDF');
+  pdf.type='button';pdf.onclick=()=>window.downloadEcoGuide(i);actions.append(pdf);
   if(isTeacher()&&p.source!=='base'){
    const del=make('button','eco-delete-btn','🗑 Eliminar');
    del.type='button';del.onclick=()=>window.deleteEcoProject(p.id,p.name);
@@ -66,17 +64,64 @@ window.showEcoDetail=i=>{
  $('ecoMaterialList').replaceChildren(...p.materials.map(m=>make('li','',m[1]+'  '+m[0])));
  text($('ecoDetailFinish'),'¡Y listo! Ya tienes tu '+p.name.toLowerCase()+'.');
  $('ecoRegisterBtn').hidden=!isStudent();
- $('ecoDetailPdfBtn').hidden=!p.pdf?.startsWith('https://');
+ $('ecoDetailPdfBtn').hidden=false;
  open('ecoDetailOverlay');
 };
 window.closeEcoDetail=()=>close('ecoDetailOverlay');
 window.openEcoPreview=()=>notify('🎨 '+getProject().name,getProject().description+'\n\n'+getProject().steps.map((x,i)=>`${i+1}. ${x}`).join('\n'));
-window.downloadEcoGuide=index=>{
+// Generar PDF real en el navegador a partir de la plantilla publicada.
+// jsPDF se carga desde index.html. No requiere guardar archivos PDF en Firebase.
+window.downloadEcoGuide=async index=>{
  const p=projects[index===undefined?current:index];if(!p)return;
- if(p.pdf?.startsWith('https://')){window.open(p.pdf,'_blank','noopener,noreferrer');return;}
- const body=p.name+'\n\nMATERIALES\n'+p.materials.map(m=>'- '+m[0]).join('\n')+'\n\nPROCEDIMIENTO\n'+p.steps.map((s,i)=>`${i+1}. ${s}`).join('\n');
- window.downloadPdf?.(p.pdf||'Guia_EcoArte.pdf',body);
+ const jsPDF=window.jspdf?.jsPDF;
+ if(!jsPDF){alert('No se pudo cargar el generador de PDF. Revisa tu conexión e inténtalo de nuevo.');return;}
+ try{
+  const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,H=297,margin=18,content=W-margin*2;
+  let y=22;
+  const color=(r,g,b)=>pdf.setTextColor(r,g,b);
+  const newPage=needed=>{if(y+needed>H-18){pdf.addPage();y=22;}};
+  const lines=(str,maxWidth=content)=>pdf.splitTextToSize(String(str||''),maxWidth);
+  const paragraph=(str,size=11,leading=6)=>{
+   pdf.setFont('helvetica','normal');pdf.setFontSize(size);color(55,65,81);
+   for(const line of lines(str)){newPage(leading);pdf.text(line,margin,y);y+=leading;}
+  };
+  const heading=str=>{newPage(16);y+=5;pdf.setFont('helvetica','bold');pdf.setFontSize(14);color(116,65,190);pdf.text(str,margin,y);y+=9;};
+  pdf.setFillColor(116,65,190);pdf.rect(0,0,W,12,'F');
+  pdf.setFont('helvetica','bold');pdf.setFontSize(21);color(85,37,145);
+  for(const line of lines(p.name,content)){newPage(10);pdf.text(line,margin,y);y+=10;}
+  pdf.setFont('helvetica','normal');pdf.setFontSize(9);color(85,100,110);
+  pdf.text('EcoReto Escolar - Guia de EcoArte',margin,y);y+=10;
+  // Insertar fotografía si el servidor permite acceso CORS; si no, el PDF sigue siendo útil.
+  try{
+   const response=await fetch(p.image,{mode:'cors'});
+   if(!response.ok)throw Error('Imagen no disponible');
+   const blob=await response.blob();
+   const img=await createImageBitmap(blob);
+   const canvas=document.createElement('canvas');
+   const scale=Math.min(1,1000/Math.max(img.width,img.height));
+   canvas.width=Math.round(img.width*scale);canvas.height=Math.round(img.height*scale);
+   canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+   const imageData=canvas.toDataURL('image/jpeg',0.85);
+   const width=Math.min(content,125),height=Math.min(85,width*img.height/img.width);
+   newPage(height+6);pdf.addImage(imageData,'JPEG',margin,y,width,height);y+=height+7;
+   img.close?.();
+  }catch(err){console.warn('No se pudo incluir la foto en el PDF:',err);}
+  heading('Descripcion');paragraph(p.description||'Manualidad con materiales reutilizados.');
+  heading('Materiales necesarios');
+  (p.materials||[]).forEach(m=>{
+   const [nombre,,cantidad]=Array.isArray(m)?m:[m.nombre,m.icono,m.cantidad];
+   paragraph('- '+nombre+'  |  Cantidad: '+cantidad,10,6);
+  });
+  heading('Procedimiento paso a paso');
+  (p.steps||[]).forEach((step,i)=>paragraph((i+1)+'. '+step,10.5,6));
+  y+=8;newPage(10);pdf.setFontSize(9);color(110,110,110);
+  pdf.text('EcoReto Escolar - Clasificamos, reutilizamos y reducimos',margin,y);
+  const filename='EcoArte_'+String(p.name||'Manualidad').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9_-]+/g,'_').slice(0,60)+'.pdf';
+  pdf.save(filename);
+ }catch(error){console.error('Generar PDF EcoArte:',error);alert('No se pudo generar el PDF: '+error.message);}
 };
+
 window.showEcoRegister=()=>{
  if(!isStudent())return notify('Acceso restringido','Solo los estudiantes pueden registrar manualidades realizadas.');
  const p=getProject();$('ecoRegisterImage').src=p.image;text($('ecoRegisterName'),p.name);$('ecoProductQuantity').value=1;
