@@ -74,7 +74,29 @@ window.openEcoPreview=()=>notify('🎨 '+getProject().name,getProject().descript
 window.downloadEcoGuide=async index=>{
  const p=projects[index===undefined?current:index];if(!p)return;
  const jsPDF=window.jspdf?.jsPDF;
- if(!jsPDF){alert('No se pudo cargar el generador de PDF. Revisa tu conexión e inténtalo de nuevo.');return;}
+ if(!jsPDF){
+  const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const materials=(p.materials||[]).map(m=>Array.isArray(m)?m:[m.nombre,m.icono,m.cantidad]);
+  const steps=(p.steps||[]).map(v=>esc(v));
+  const win=window.open('','_blank');
+  if(!win){alert('Permite las ventanas emergentes para generar la guía PDF.');return;}
+  const doc=`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Guía - ${esc(p.name)}</title>
+  <style>@page{size:A4;margin:18mm}body{font-family:Arial,sans-serif;color:#253047;line-height:1.5}
+  h1{color:#6d32aa;font-size:24px}h2{color:#6d32aa;font-size:17px;border-bottom:1px solid #ddd;padding-bottom:6px}
+  img{max-width:100%;max-height:85mm;object-fit:contain;border-radius:10px}li{margin:8px 0}
+  .intro{color:#555}button{padding:10px 16px;background:#7442bd;color:white;border:0;border-radius:8px;cursor:pointer}
+  @media print{button{display:none}}</style></head><body>
+  <button onclick="window.print()">🖨 Guardar como PDF / Imprimir</button>
+  <h1>♻️ ${esc(p.name)}</h1><p class="intro">${esc(p.description)}</p>
+  ${p.image?`<img src="${esc(p.image)}" alt="Fotografía de manualidad">`:''}
+  <h2>Materiales necesarios</h2><ul>${materials.map(m=>`<li>${esc(m[1])} ${esc(m[0])} — Cantidad: ${esc(m[2]??1)}</li>`).join('')}</ul>
+  <h2>Procedimiento</h2><ol>${steps.map(step=>`<li>${step}</li>`).join('')}</ol>
+  </body></html>`;
+  win.document.open();win.document.write(doc);win.document.close();
+  win.focus();
+  alert('Se abrió la guía. Pulsa «Guardar como PDF / Imprimir» y elige «Guardar como PDF».');
+  return;
+ }
  try{
   const pdf=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
   const W=210,H=297,margin=18,content=W-margin*2;
