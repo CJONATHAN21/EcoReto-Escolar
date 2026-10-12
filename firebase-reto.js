@@ -396,7 +396,25 @@ async function updateLogros() {
       0
     );
 
-    const reused = 0;
+    // EcoArte: sumar únicamente manualidades aprobadas del alumno y del mes seleccionado.
+    // Una sola condición de Firestore evita requerir un índice compuesto adicional.
+    const artSnap = await getDocs(query(
+      collection(db, 'manualidades_realizadas'),
+      where('alumnoId', '==', requestedStudent)
+    ));
+    if (requestedStudent !== student) return;
+    const reused = artSnap.docs.reduce((sum, record) => {
+      const data = record.data();
+      if (data.estado !== 'aprobado') return sum;
+      const date = data.creadoEn?.toDate?.();
+      if (!date) return sum;
+      const monthInPeru = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Lima', year: 'numeric', month: '2-digit'
+      }).format(date);
+      if (monthInPeru !== selectedMonth) return sum;
+      return sum + (Array.isArray(data.materiales) ? data.materiales : [])
+        .reduce((count, material) => count + Math.max(0, Number(material.cantidad) || 0), 0);
+    }, 0);
 
     setText(
       'logroRecolectados',
@@ -415,7 +433,7 @@ async function updateLogros() {
 
     setText(
       'logroReducidos',
-      total - reused
+      Math.max(0, total - reused)
     );
 
     const percentage = Math.min(
@@ -444,7 +462,7 @@ async function updateLogros() {
 
       $('logrosSource').textContent =
         `Recolección real de ${studentName} · ${value}. ` +
-        'Reutilización pendiente de integrar con EcoArte.';
+        `EcoArte aprobado: ${reused} materiales reutilizados.`;
     }
 
   } catch (error) {

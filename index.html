@@ -277,10 +277,10 @@
     <nav>
       <button class="nav-btn active" onclick="switchTab('inicio')">🏠 Inicio</button>
       <button class="nav-btn" onclick="switchTab('guia')">♻️ Guía</button>
-      <button class="nav-btn" onclick="switchTab('ecoreto')">🎯 EcoReto</button>
+      <button class="nav-btn" id="navEcoReto" onclick="switchTab('ecoreto')" hidden>🎯 EcoReto</button>
       <button class="nav-btn" onclick="switchTab('ecoarte')">🎨 EcoArte</button>
       <button class="nav-btn" onclick="switchTab('galeria')">📸 Galería</button>
-      <button class="nav-btn" onclick="switchTab('logros')">🏆 Mis Logros</button>
+      <button class="nav-btn" id="navMisLogros" onclick="switchTab('logros')" hidden>🏆 Mis Logros</button>
     </nav>
 
     <div class="auth-bar">
@@ -608,7 +608,7 @@
           </div>
         </div>
 
-        <p id="logrosSource" style="font-size:.9rem;color:#636e72;margin-bottom:8px">Los totales recolectados se consultan desde Firebase. EcoArte se integrará en una siguiente etapa.</p>
+        <p id="logrosSource" style="font-size:.9rem;color:#636e72;margin-bottom:8px">Tu progreso combina la recolección de EcoReto y las manualidades de EcoArte aprobadas por el docente.</p>
         <div class="achievements-grid">
           <div class="achievement-card">
             <div class="logro-icon">♻️</div><h4>Materiales recolectados</h4>
@@ -710,6 +710,8 @@
 </div>
   <script>
     function switchTab(tabId) {
+      if (tabId === 'logros' && !window.ecoAlumnoAutorizado) return;
+      if (tabId === 'ecoreto' && !window.ecoRetoAutorizado) return;
       document.querySelectorAll('.section-tab').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById('tab-' + tabId).classList.add('active');
@@ -907,8 +909,42 @@
       }
     });
   </script>
+  <script type="module">
+    import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+    import { getFirestore, getDoc, doc } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+    import { firebaseConfig } from './firebase-config.js';
+    import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+    const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+    const auth = getAuth(app), db = getFirestore(app);
+    const navReto = document.getElementById('navEcoReto');
+    const navLogros = document.getElementById('navMisLogros');
+    let roleRequest = 0;
+    window.ecoAlumnoAutorizado = false;
+    window.ecoRetoAutorizado = false;
+    onAuthStateChanged(auth, async user => {
+      const requestId = ++roleRequest;
+      window.ecoAlumnoAutorizado = false;
+      window.ecoRetoAutorizado = false;
+      navReto.hidden = true;
+      navLogros.hidden = true;
+      if (document.getElementById('tab-logros').classList.contains('active') ||
+          document.getElementById('tab-ecoreto').classList.contains('active')) switchTab('inicio');
+      if (!user) return;
+      try {
+        await user.reload();
+        if (!user.emailVerified) return;
+        const profile = await getDoc(doc(db, 'usuarios', user.uid));
+        if (requestId !== roleRequest || getAuth(app).currentUser?.uid !== user.uid) return;
+        const role = profile.exists() ? profile.data().rol : null;
+        window.ecoAlumnoAutorizado = role === 'alumno';
+        window.ecoRetoAutorizado = role === 'alumno' || role === 'docente';
+        navLogros.hidden = !window.ecoAlumnoAutorizado;
+        navReto.hidden = !window.ecoRetoAutorizado;
+      } catch (error) { console.error('Error comprobando acceso a los menús:', error); }
+    });
+  </script>
   <script type="module" src="./firebase-auth.js"></script>
-  <script type="module" src="./firebase-reto.js"></script>
+  <script type="module" src="./firebase-reto.js?v=7"></script>
   <script type="module" src="./firebase-ecoarte.js?v=5"></script>
 </body>
 </html>
